@@ -1,0 +1,996 @@
+:root {
+  --green-900: #020a09;
+  --green-600: #7a804a;
+  --green-100: #d3d8b3;
+  --red-600: #9f252b;
+  --white: #ffffff;
+  --optima: "Optima", sans-serif;
+  --montserrat: "Montserrat", sans-serif;
+}
+@font-face {
+  font-family: "Optima";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Optima"), url("fonts/Optima.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Optima Medium";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Optima Medium"), url("fonts/Optima\ Medium.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Optima Bold";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Optima Bold"), url("/fonts/Optima\ Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  src: local("Montserrat"), url("/fonts/Montserrat.woff2") format("woff2");
+}
+
+/* Основные стили */
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  &.link {
+    color: var(--red-600);
+  }
+}
+
+button,
+input[type="submit"] {
+  border: 0;
+}
+
+body {
+  font-family: var(--montserrat);
+  background-color: var(--green-100);
+  overflow-x: hidden;
+  color: var(--green-900);
+}
+
+input,
+textarea,
+button {
+  color: #1d1d1d;
+  font-family: var(--montserrat);
+}
+
+html {
+  font-size: 0.625vw;
+  overflow-x: hidden;
+  background-color: var(--green-100);
+}
+html * {
+  -webkit-tap-highlight-color: transparent;
+}
+html ::selection {
+  background-color: var(--green-600);
+  color: #FFF;
+}
+
+@media only screen and (orientation: portrait) {
+  html {
+    font-size: 2.778vw;
+  }
+}
+
+.btn{
+  cursor: pointer;
+  background: var(--red-600);
+  color: var(--white);
+  font-size: 1.6rem;
+  padding: 1.5rem 3rem;
+  border-radius: 123px;
+}
+
+/* Хедер */
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 10;
+  width: 100vw;
+  padding: 3rem 5rem;
+}
+.logo{
+  width: 19rem;
+  height: 4.6rem;
+}
+.burger-icon{
+  width: 5rem;
+  height: 1.8rem;
+  cursor: pointer;
+}
+/* Хедер конец */
+
+/* главный баннер */
+.main-banner {
+  height: 150vh;
+}
+.icon-btn {
+  cursor: pointer;
+  width: fit-content;
+  position: relative;
+}
+.icon-btn__icon {
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  width: 3.4rem;
+  height: 4.6rem;
+}
+.icon-btn__bg{
+  height: 4.6rem;
+  background-color: var(--red-600);
+  border-radius: 4rem;
+  top: 50%;
+  transform: translate(0,-50%);
+  position: absolute;
+  padding: 0 3rem;
+  opacity: 0;
+  z-index: 1;
+}
+.icon-btn__text{
+  position: relative;
+  z-index: 2;
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  padding: 1.5rem 3rem;
+
+  transition: color 0.5s;
+}
+
+/* фиксированный элемент для заднего фона куда можно вставлять изображения */
+.fixed-background {
+  position: fixed;
+  z-index: -1;
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center center;
+  top: 0;
+
+  background-color: var(--green-100);
+}
+
+/* фиксированный элемент для заднего фона куда можно вставлять изображения */
+
+.image-foreground {
+  /* width: 480rem;
+  height: 308.9rem; */
+  /* top: -103.9rem; */
+  /* left: -158rem; */
+
+  width: 383.7rem;
+  height: 312.824vh;
+
+  position: fixed;
+  top: -105vh;
+  left: -115rem;
+
+  z-index: 2;
+}
+.mob-image-foreground {
+  display: none;
+}
+.fixed-video {
+  width: 100%;
+  height: 100vh;
+  object-position: 30% 40%;
+  object-fit: cover;
+  position: absolute;
+  right: 0;
+}
+.main-text-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+}
+.main-text {
+  font-size: 26rem;
+  line-height: 1;
+  color: #7a804a;
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-48%, -50%);
+  font-family: var(--optima);
+  white-space: nowrap;
+}
+
+.image-gallery {
+  background-color: var(--green-100);
+}
+.image-grid {
+  height: 100vh;
+  position: relative;
+}
+.fixed-wrapper {
+  /* width: 72vh; */
+  width: 50rem;
+  height: 100vh;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  overflow: hidden;
+  /* background-color: #d4c9c9; */
+  z-index: 2;
+}
+.fixed-wrapper_inherit {
+  width: inherit;
+  height: inherit;
+}
+.fixed-container {
+  position: absolute;
+  /* top: -100dvh; */
+  height: inherit;
+  width: 100%;
+  /* background-color: aqua; */
+  z-index: 1;
+}
+.fixed-container_half-height{
+  height: 50%;
+}
+.fixed-container-two-tripartile-height{
+  height: 66.666666666%;
+}
+
+.fixed-asset {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  object-position: 50% 50%;
+  width: 100%;
+  height: 100%;
+}
+
+.image-grid-first-elem {
+  width: 70rem;
+  height: 41rem;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.sale-info-block {
+  margin-top: 10rem;
+}
+.sale-info-title {
+  font-size: 2.4rem;
+  line-height: 140%;
+  letter-spacing: 0.02em;
+}
+.sale-info-value {
+  font-size: 10rem;
+  line-height: 1;
+  font-family: var(--optima);
+  color: var(--green-600);
+  margin-top: 3rem;
+  position: relative;
+}
+.sale-info-value__icon {
+  position: absolute;
+  left: -3.4rem;
+  top: 0.9rem;
+  width: 3.9rem;
+  height: 5.2rem;
+}
+
+.sale-info-text {
+  font-size: 1.6rem;
+  line-height: 1;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+
+  margin-top: 1rem;
+}
+
+.image-gallery__action {
+  margin-top: 6rem;
+}
+
+/* прайс лист */
+.price-list {
+  display: flex;
+  flex-flow: column;
+  gap: 5rem;
+  align-items: center;
+  background-color: var(--green-100);
+
+  width: 160rem;
+}
+.price-list__container {
+  width: 100%;
+  overflow: hidden;
+}
+.price-list-content-wrapper {
+  display: flex;
+  width: 300rem;
+}
+.price-list-content {
+  width: 150rem;
+  flex-shrink: 0;
+}
+
+.price-list__title {
+  font-size: 10rem;
+  line-height: 1;
+  color: var(--green-600);
+}
+.price-list__text {
+  font-size: 1.6rem;
+  line-height: 1;
+  text-align: center;
+}
+.tabs-container {
+  display: flex;
+  justify-content: space-between;
+  border-top: solid;
+  border-bottom: solid;
+  border-color: var(--green-600);
+  border-width: 0.1rem;
+  padding: 1rem;
+  width: 85rem;
+}
+
+.tab {
+  font-size: 2.4rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: 0.5;
+  cursor: pointer;
+
+  &.active {
+    opacity: 1;
+  }
+}
+.tab__divider {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.price-list-item {
+  position: relative;
+
+  height: 6.1rem;
+  overflow: hidden;
+  cursor: pointer;
+
+  border-top: solid;
+  border-color: var(--green-600);
+  border-width: 0.1rem;
+  padding: 2rem 5rem;
+  font-size: 2rem;
+  line-height: 1;
+
+  transition: height 0.2s, background-color 0.2s, color 0.2s;
+  &:hover {
+    background-color: var(--green-600);
+    color: var(--white);
+  }
+  &.active {
+    background-color: var(--green-600);
+    color: var(--white);
+
+    .price-list-item__body {
+      opacity: 1;
+    }
+  }
+}
+.price-list-item__body {
+  margin-top: 5rem;
+  font-weight: 300;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.05s;
+}
+.price-list-item__icon {
+  position: absolute;
+  right: 5.3rem;
+  width: 2rem;
+  height: 2rem;
+}
+.price-list-table_mob {
+  display: none;
+}
+.price-list-table {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.price-list-row {
+  display: flex;
+}
+.price-list-cell {
+  width: 24rem;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.price-list-cell_first-col {
+  width: 69rem;
+}
+.price-list-cell_heading {
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  opacity: 0.5;
+  margin-bottom: 0.6rem;
+}
+.price-list__action {
+  padding: 1.5rem 0 5rem;
+}
+/* прайс лист */
+
+/* текст по центру */
+.centered-text-wrapper {
+  background: var(--green-100);
+  position: relative;
+  height: 200vh;
+}
+.centered-text-container {
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+}
+.centered-text {
+  text-align: center;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--green-600);
+
+  width: 120rem;
+  font-size: 5rem;
+  line-height: 1;
+}
+.centered-text-1 {
+  opacity: 1;
+}
+/* текст по центру */
+
+.one-screen-transparent-container {
+  display: none;
+}
+
+/* наши мастера */
+.our-masters {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.our-masters-text-container {
+  background-color: var(--green-100);
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+}
+.our-masters-title {
+  color: var(--green-600);
+  font-size: 10rem;
+  line-height: 1;
+  text-align: center;
+}
+.our-masters-text {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin-top: 5rem;
+  width: 60rem;
+}
+.master {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  width: 105rem;
+  height: 120rem;
+
+  position: relative;
+
+  background-color: var(--green-100);
+  &:not(:last-child) {
+    padding-bottom: 29.5rem;
+  }
+}
+.master_pad-top {
+  padding-top: 20rem;
+}
+.master__blank-space{
+  width: 40rem;
+  height: 60rem;
+}
+.master-image {
+  width: 40rem;
+  height: 60rem;
+  position: relative;
+}
+.master-image_start{
+  height: 90rem;
+}
+.master-image_center{
+  height: 120rem;
+  position: absolute;
+  left: 5rem;
+  top: -10rem;
+}
+.master-image_last{
+  height: 90rem;
+  position: absolute;
+  left: 5rem;
+  top: -10rem;
+}
+.master-image_twice-height {
+  height: 120rem;
+}
+
+.separator{
+  position: absolute;
+  bottom: 0;
+  height: 4rem;
+  left: -3rem;
+  transform: translate(0, 50%);
+  width: 46rem;
+  background-color: var(--green-100);
+  opacity: 1;
+  filter: blur(.7rem);
+  z-index: 3;
+}
+.master-info {
+  width: 50rem;
+  height: fit-content;
+}
+.master-name {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 5rem;
+}
+.master-text-wrapper {
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.master-desc-wrapper {
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+.master-desc-title {
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0.5;
+}
+.master-desc-text {
+  font-size: 1.6rem;
+  line-height: 1;
+  line-height: 1.4;
+}
+.master-action-block {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+}
+/* наши мастера */
+
+/* Оборудование */
+/* .our-equipment {
+  background-color: var(--green-100);
+}
+.our-equipment_pad-top {
+  padding-top: 52.8rem;
+}
+.our-equipment__title {
+  font-size: 10rem;
+  line-height: 1;
+  color: var(--green-600);
+  text-align: center;
+}
+.equipment {
+  display: flex;
+  justify-content: space-between;
+}
+.equipment_pad-top {
+  padding-top: 39.5rem;
+}
+.equipment-image {
+  width: 70rem;
+  height: 140rem;
+}
+.equipment-info {
+  display: flex;
+  flex-flow: column;
+  width: 70rem;
+  gap: 6rem;
+}
+.equipment__title {
+  font-size: 4rem;
+  line-height: 1;
+}
+.equipment-certification-info {
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.equipment__desc {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 65rem;
+}
+.equipment-certificates {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment-certificate {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.equipment-certificate__img{
+  width: 5rem;
+  height: 6rem;
+  flex-shrink: 0;
+}
+.equipment-ceritificate__name {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 38.3rem;
+}
+.equipment-advantages-info {
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.equipment__heading {
+  font-size: 2.4rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.equipment__text {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.equipment__links {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment__link {
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+} */
+/* Оборудование конец */
+
+@media only screen and (orientation: portrait) {
+  .header{
+    justify-content: center;
+  }
+  .header__btn{
+    display: none;
+  }
+  .header__burger{
+    display: none;
+  }
+
+
+  .main-banner {
+    height: 200vh;
+  }
+  .fixed-video {
+    width: 36rem;
+  }
+  .mob-image-foreground {
+    width: 102vw;
+    height: 122.4rem;
+    position: fixed;
+    top: 0;
+    left: -1vw;
+    z-index: 2;
+    display: block;
+  }
+  .image-foreground {
+    display: none;
+  }
+  .image-grid {
+    height: unset;
+  }
+  .image-gallery__action {
+    display: flex;
+    justify-content: center;
+  }
+  .image-grid-first-elem {
+    width: 34rem;
+    height: 20rem;
+  }
+  .sale-info-block {
+    margin-top: 5rem;
+  }
+  .sale-info-value {
+    margin-left: 3.4rem;
+  }
+
+  .main-text {
+    line-height: 1;
+    font-size: 7rem;
+  }
+  /* пустой элемент ровно на один экран */
+  .one-screen-transparent-container {
+    background-color: transparent;
+    width: 100%;
+    height: 100vh;
+    display: block;
+  }
+  .one-screen-transparent {
+    background-color: transparent;
+    height: 100vh;
+  }
+  .image-gallery {
+    background-color: transparent;
+  }
+
+  .fixed-wrapper {
+    display: none;
+  }
+
+  /* прайс лист */
+  .price-list {
+    width: unset;
+    font-size: 1.8rem;
+    line-height: 1;
+    gap: 3rem;
+  }
+  .price-list__title {
+    font-size: 4rem;
+    line-height: 1;
+  }
+  .price-list__text {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .tabs-container {
+    width: 100%;
+  }
+  .tab {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  .tab__divider {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  .price-list-item {
+    padding: 2rem 1rem;
+    &:hover {
+      background-color: var(--green-100);
+      color: var(--green-900);
+    }
+    &.active {
+      background-color: var(--green-600);
+      color: var(--white);
+    }
+  }
+  .price-list-item__icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    right: 2rem;
+  }
+  .price-list-content {
+    width: 36rem;
+  }
+  .price-list-content-wrapper {
+    width: 72rem;
+  }
+
+  .price-list-table {
+    display: none;
+  }
+  .price-list-item__body {
+    margin-top: 3rem;
+  }
+  .price-list-table_mob {
+    display: flex;
+    flex-flow: column;
+    gap: 2rem;
+  }
+  .price-list-row {
+    justify-content: space-between;
+  }
+  .price-list-cell {
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 10rem;
+  }
+  .price-list-cell_first-col {
+    font-size: 1rem;
+    line-height: 1;
+    margin-bottom: 0;
+  }
+  .price-list-col {
+    display: flex;
+    flex-flow: column;
+    gap: 1rem;
+  }
+  .price-list-cell_heading {
+    margin-bottom: 0;
+  }
+  .price-list__action {
+    margin-top: 1.5rem;
+  }
+  /* прайс лист */
+
+  .centered-text {
+    width: 100%;
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  /* наши мастера */
+  .our-masters-title {
+    font-size: 4rem;
+    line-height: 1;
+  }
+  .our-masters-text {
+    width: unset;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    margin-bottom: 5rem;
+  }
+  .master {
+    width: unset;
+  }
+  .master_pad-top {
+    padding-top: 10rem;
+  }
+  .master-image {
+    display: none;
+  }
+  .master__blank-space{
+    display: none;
+  }
+  .master-info {
+    width: unset;
+  }
+
+
+  /* .our-equipment__title{
+    font-size: 4rem;
+    line-height: 1;
+  }
+  .equipment-image{
+    width: 34rem;
+    height: 68rem;
+    position: relative;
+    z-index: 2;
+  }
+  .equipment{
+    flex-flow: column;
+    gap: 10rem;
+    padding-top: 1rem;
+  }
+  .equipment-info{
+    width: unset;
+    gap: 3rem;
+  }
+  .equipment__title{
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+  .equipment__desc{
+    width: unset;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+  .equipment-ceritificate__name{
+    font-size: 1.4rem;
+    line-height: 1.4;
+    width: unset;
+  }
+  .equipment-certification-info{
+    gap: 2rem;
+  }
+  .equipment-advantages-info{
+    gap: 2rem;
+  }
+  .equipment__text{
+    font-size: 1.4rem;
+  } */
+}
+/* элемент который берется за эталон высоты мобильного устройства без Ui элементов */
+.mobileHeightRef {
+  height: 100vh !important;
+
+  z-index: -99999999;
+  position: absolute;
+}
+.hidden {
+  display: none;
+}
+.container {
+  padding-left: 5rem;
+  padding-right: 5rem;
+}
+.container-big {
+  padding-left: 10rem;
+  padding-right: 10rem;
+}
+.container-pad-top {
+  background: var(--green-100);
+  padding-top: 20rem;
+}
+.container_empty {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.white-space-small {
+  width: 100%;
+  height: 100vh;
+}
+.white-space-small-filled {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--green-100);
+}
+.white-space {
+  width: 100%;
+  height: 2000rem;
+}
+.white-space-filled {
+  background-color: var(--green-100);
+  width: 100%;
+  height: 2000rem;
+}
+@media only screen and (orientation: portrait) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .container-big {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .container-empty-mob {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .container-pad-top {
+    padding-top: 20rem;
+  }
+}
