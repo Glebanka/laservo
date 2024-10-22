@@ -90,7 +90,7 @@ html * {
 }
 html ::selection {
   background-color: var(--green-600);
-  color: #FFF;
+  color: #fff;
 }
 
 @media only screen and (orientation: portrait) {
@@ -99,7 +99,7 @@ html ::selection {
   }
 }
 
-.btn{
+.btn {
   cursor: pointer;
   background: var(--red-600);
   color: var(--white);
@@ -108,8 +108,18 @@ html ::selection {
   border-radius: 123px;
 }
 
+.only-desktop {
+  display: block;
+}
+.only-mobile {
+  display: none;
+}
+.inline-block {
+  display: inline-block;
+}
+
 /* Хедер */
-.header{
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -119,11 +129,11 @@ html ::selection {
   width: 100vw;
   padding: 3rem 5rem;
 }
-.logo{
+.logo {
   width: 19rem;
   height: 4.6rem;
 }
-.burger-icon{
+.burger-icon {
   width: 5rem;
   height: 1.8rem;
   cursor: pointer;
@@ -146,18 +156,18 @@ html ::selection {
   width: 3.4rem;
   height: 4.6rem;
 }
-.icon-btn__bg{
+.icon-btn__bg {
   height: 4.6rem;
   background-color: var(--red-600);
   border-radius: 4rem;
   top: 50%;
-  transform: translate(0,-50%);
+  transform: translate(0, -50%);
   position: absolute;
   padding: 0 3rem;
   opacity: 0;
   z-index: 1;
 }
-.icon-btn__text{
+.icon-btn__text {
   position: relative;
   z-index: 2;
   font-size: 1.6rem;
@@ -216,23 +226,34 @@ html ::selection {
   z-index: 3;
 }
 .main-text {
-  font-size: 26rem;
-  line-height: 1;
-  color: #7a804a;
   position: absolute;
   z-index: 3;
   top: 50%;
   left: 50%;
-  transform: translate(-48%, -50%);
-  font-family: var(--optima);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-flow: column;
+  align-items: end;
+}
+.main-text__title {
+  font-size: 26rem;
+  line-height: 1;
+  color: #7a804a;
   white-space: nowrap;
+  font-family: var(--optima);
+}
+.main-text__under {
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: #7a804a;
 }
 
 .image-gallery {
   background-color: var(--green-100);
 }
 .image-grid {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
 }
 .fixed-wrapper {
@@ -258,10 +279,10 @@ html ::selection {
   /* background-color: aqua; */
   z-index: 1;
 }
-.fixed-container_half-height{
+.fixed-container_half-height {
   height: 50%;
 }
-.fixed-container-two-tripartile-height{
+.fixed-container-two-tripartile-height {
   height: 66.666666666%;
 }
 
@@ -319,6 +340,77 @@ html ::selection {
   margin-top: 6rem;
 }
 
+.service:hover .service-bg_half-opacity {
+  transform: translate(0);
+  transition: transform 0.5s;
+}
+.service:hover .service-bg_full-opacity {
+  transform: translate(0);
+  transition: transform 0.5s 0.25s;
+}
+
+/* услуги */
+.services__title {
+  font-size: 10rem;
+  line-height: 1;
+  color: var(--green-600);
+  text-align: center;
+}
+
+.services-slider {
+  margin-top: 20rem;
+}
+.service {
+  width: 25rem;
+  height: 50rem;
+  position: relative;
+  overflow: hidden;
+}
+.service__img {
+  width: 25rem;
+  height: 50rem;
+  object-fit: cover;
+  object-position: center center;
+  position: absolute;
+}
+.service__title {
+  position: absolute;
+  width: 18rem;
+  left: 3rem;
+  bottom: 3.3rem;
+
+  color: var(--white);
+  letter-spacing: 0.02em;
+  font-size: 2.4rem;
+  line-height: 1;
+  z-index: 2;
+}
+
+.service-bg {
+  width: 25rem;
+  height: 25rem;
+  position: absolute;
+  bottom: 0;
+}
+.service-bg_half-opacity {
+  width: 25rem;
+  height: 25rem;
+  position: absolute;
+  opacity: 0.5;
+  transform: translate(0, 101%);
+  background: var(--green-600);
+  transition: transform 0.5s 0.25s;
+}
+.service-bg_full-opacity {
+  width: 25rem;
+  height: 25rem;
+  position: absolute;
+  transform: translate(0, 101%);
+  background: var(--green-600);
+  transition: transform 0.5s;
+}
+/* услуги конец */
+
 /* прайс лист */
 .price-list {
   display: flex;
@@ -336,10 +428,12 @@ html ::selection {
 .price-list-content-wrapper {
   display: flex;
   width: 300rem;
+  transition: height 0.1s;
 }
 .price-list-content {
   width: 150rem;
   flex-shrink: 0;
+  height: fit-content;
 }
 
 .price-list__title {
@@ -414,6 +508,11 @@ html ::selection {
   line-height: 1.5;
   opacity: 0;
   transition: opacity 0.05s;
+  cursor: default;
+}
+.price-list-item__body ::selection {
+  color: var(--green-600);
+  background: var(--white);
 }
 .price-list-item__icon {
   position: absolute;
@@ -451,13 +550,20 @@ html ::selection {
 .price-list__action {
   padding: 1.5rem 0 5rem;
 }
+.price-list__more-info-link {
+  display: block;
+  margin-top: 4rem;
+  text-decoration: underline;
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
 /* прайс лист */
 
 /* текст по центру */
 .centered-text-wrapper {
   background: var(--green-100);
   position: relative;
-  height: 200vh;
 }
 .centered-text-container {
   position: absolute;
@@ -476,9 +582,6 @@ html ::selection {
   width: 120rem;
   font-size: 5rem;
   line-height: 1;
-}
-.centered-text-1 {
-  opacity: 1;
 }
 /* текст по центру */
 
@@ -529,7 +632,7 @@ html ::selection {
 .master_pad-top {
   padding-top: 20rem;
 }
-.master__blank-space{
+.master__blank-space {
   width: 40rem;
   height: 60rem;
 }
@@ -538,16 +641,16 @@ html ::selection {
   height: 60rem;
   position: relative;
 }
-.master-image_start{
+.master-image_start {
   height: 90rem;
 }
-.master-image_center{
+.master-image_center {
   height: 120rem;
   position: absolute;
   left: 5rem;
   top: -10rem;
 }
-.master-image_last{
+.master-image_last {
   height: 90rem;
   position: absolute;
   left: 5rem;
@@ -557,7 +660,7 @@ html ::selection {
   height: 120rem;
 }
 
-.separator{
+.separator {
   position: absolute;
   bottom: 0;
   height: 4rem;
@@ -566,7 +669,7 @@ html ::selection {
   width: 46rem;
   background-color: var(--green-100);
   opacity: 1;
-  filter: blur(.7rem);
+  filter: blur(0.7rem);
   z-index: 3;
 }
 .master-info {
@@ -604,6 +707,45 @@ html ::selection {
   justify-content: center;
 }
 /* наши мастера */
+
+/* Преимущества */
+.our-advantages {
+}
+.our-advantages__title {
+  font-size: 10rem;
+  line-height: 1.2;
+  color: var(--green-600);
+  text-align: center;
+}
+/* Преимущества конец */
+
+/* адреса */
+.addresses-list {
+  display: flex;
+  gap: 5rem;
+}
+.address-item {
+  width: 70rem;
+}
+.addresses-list__wrapper {
+  display: flex;
+  flex-flow: column;
+}
+.addresses-list__title {
+  font-size: 4rem;
+  line-height: 1;
+}
+.map-wrapper {
+  width: 75rem;
+  height: 50rem;
+  position: relative;
+}
+.map {
+  width: 75rem;
+  height: 50rem;
+  background-color: var(--green-600);
+}
+/* адреса конец */
 
 /* Оборудование */
 /* .our-equipment {
@@ -699,16 +841,22 @@ html ::selection {
 /* Оборудование конец */
 
 @media only screen and (orientation: portrait) {
-  .header{
-    justify-content: center;
-  }
-  .header__btn{
+  .only-desktop {
     display: none;
   }
-  .header__burger{
-    display: none;
+  .only-mobile {
+    display: block;
   }
 
+  .header {
+    justify-content: center;
+  }
+  .header__btn {
+    display: none;
+  }
+  .header__burger {
+    display: none;
+  }
 
   .main-banner {
     height: 200vh;
@@ -746,9 +894,14 @@ html ::selection {
     margin-left: 3.4rem;
   }
 
-  .main-text {
+  .main-text__title {
     line-height: 1;
-    font-size: 7rem;
+    font-size: 7.6rem;
+  }
+  .main-text__under {
+    font-size: 1.6rem;
+    line-height: 1.4;
+    color: var(--white);
   }
   /* пустой элемент ровно на один экран */
   .one-screen-transparent-container {
@@ -756,6 +909,8 @@ html ::selection {
     width: 100%;
     height: 100vh;
     display: block;
+    z-index: 0;
+    position: relative;
   }
   .one-screen-transparent {
     background-color: transparent;
@@ -786,9 +941,10 @@ html ::selection {
   }
   .tabs-container {
     width: 100%;
+    padding: 2rem 1rem;
   }
   .tab {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     line-height: 1;
   }
   .tab__divider {
@@ -853,6 +1009,11 @@ html ::selection {
   .price-list__action {
     margin-top: 1.5rem;
   }
+  .price-list__more-info-link {
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
   /* прайс лист */
 
   .centered-text {
@@ -881,14 +1042,27 @@ html ::selection {
   .master-image {
     display: none;
   }
-  .master__blank-space{
+  .master__blank-space {
     display: none;
   }
   .master-info {
     width: unset;
   }
-
-
+  /* Преимущества */
+  .our-advantages__title {
+    font-size: 4rem;
+    line-height: 1.2;
+  }
+  /* Преимущества конец */
+  /* услуги */
+  .services__title {
+    font-size: 4rem;
+    line-height: 1;
+  }
+  .services-slider {
+    margin-top: 5rem;
+  }
+  /* услуги конец*/
   /* .our-equipment__title{
     font-size: 4rem;
     line-height: 1;
@@ -953,6 +1127,10 @@ html ::selection {
 .container-pad-top {
   background: var(--green-100);
   padding-top: 20rem;
+}
+.container-big-pad-top {
+  background: var(--green-100);
+  padding-top: 30rem;
 }
 .container_empty {
   padding-left: 0;
