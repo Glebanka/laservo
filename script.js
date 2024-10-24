@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
     servicesSliderInit()
     ourAdvantagesAnimation()
-    yandexMapsInit()
-    // currentYearInit()
-    // footerAnimation()
+    // yandexMapsInit()
+    currentYearInit()
+    footerAnimation()
     fixedImageAnimation()
     ourMastersAnimation()
 });
@@ -439,16 +439,17 @@ function currentYearInit() {
 function footerAnimation() {
     let footer = document.querySelector('.footer');
     let container = document.querySelector('.footer-container');
-    footer.style.height = container.getBoundingClientRect().height+ remToPx(10)+'px'
-    container.style.top = '-'+container.getBoundingClientRect().height + remToPx(5)+'px'
+    footer.style.height = container.getBoundingClientRect().height+ remToPx(5)+'px'
+    let startPosition = isMobile ? 'top top' : 'top '+(100-(((footer.getBoundingClientRect().height)/winHeight)*100))+'%'
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
-            start: 'top '+(100-((footer.getBoundingClientRect().height/winHeight)*100))+'%',
-            end: '+='+container.getBoundingClientRect().height + remToPx(5),
+            start: startPosition,
+            end: '+='+container.getBoundingClientRect().height,
             scrub: true,
         }
-    }).fromTo(container, {y: '-100%'}, {y: '0'})
+    }).fromTo(container, {y: '-100%'}, {y: '0', ease: 'none'}, 0)
+    .fromTo('.header', {opacity: 1}, {opacity: 0, ease: 'none'}, 0)
 }
 function throttle(func, delay) {
     let lastCall = 0;

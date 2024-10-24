@@ -790,6 +790,8 @@ html ::selection {
   z-index: 1;
   padding-bottom: 5rem;
   overflow: hidden;
+  width: 150rem;
+  margin: 0 auto;
 }
 .footer-separator {
   width: 100%;
@@ -797,9 +799,9 @@ html ::selection {
   background-color: var(--green-600);
 }
 .footer-container {
-  width: 150rem;
-  margin-top: 5rem;
+  padding-top: 5rem;
   position: absolute;
+  width: 150rem;
 }
 .footer-top-row {
   display: flex;
@@ -1142,8 +1144,18 @@ html ::selection {
   /* адреса конец */
 
   /* футер */
-  .footer-container {
+  .footer{
     width: unset;
+    padding-bottom: 6rem;
+  }
+  .footer-separator{
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .footer-container {
+    width: 36rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .footer-top-row {
     flex-flow: column;
