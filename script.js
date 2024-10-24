@@ -420,11 +420,11 @@ function yandexMapsInit() {
 
         let myPlacemark = new ymaps.Placemark([54.985581, 73.311039], {}, {
             iconLayout: 'default#image',
-            iconImageHref: '/assets/mapPlacemark.svg',
+            iconImageHref: 'assets/mapPlacemark.svg',
         });
         let myPlacemark2 = new ymaps.Placemark([54.994796, 73.368934], {}, {
             iconLayout: 'default#image',
-            iconImageHref: '/assets/mapPlacemark.svg',
+            iconImageHref: 'assets/mapPlacemark.svg',
         });
         myMap.geoObjects.add(myPlacemark);
         myMap.geoObjects.add(myPlacemark2);
