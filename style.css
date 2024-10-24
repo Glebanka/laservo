@@ -143,7 +143,7 @@ html ::selection {
 /* главный баннер */
 .main-banner {
   height: 150vh;
-  z-index: 1;
+  z-index: 2;
   position: relative;
 }
 .icon-btn {
@@ -210,7 +210,7 @@ html ::selection {
   top: -105vh;
   left: -115rem;
 
-  z-index: 2;
+  z-index: 3;
 }
 .mob-image-foreground {
   display: none;
@@ -222,6 +222,7 @@ html ::selection {
   object-fit: cover;
   position: absolute;
   right: 0;
+  z-index: 2;
 }
 .main-text-container {
   position: absolute;
@@ -255,8 +256,27 @@ html ::selection {
 
 .image-gallery {
   background-color: var(--green-100);
-  z-index: 1;
   position: relative;
+  padding-left: 10rem;
+  padding-right: 10rem;
+}
+.image-gallery__fixed-image{
+  position: fixed;
+  width: 50rem;
+  height: 100vh;
+  z-index: 1;
+  top: 50%;
+  right: 10rem;
+  transform: translate(0, -50%);
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.image-grid__padding-top{
+  padding-top: 20rem;
+  width: 100%;
+  background-color: var(--green-100);
+  position: relative;
+  z-index: 2;
 }
 .image-grid {
   min-height: 100vh;
@@ -576,7 +596,7 @@ html ::selection {
 .centered-text-wrapper {
   background: var(--green-100);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 .centered-text-container {
   position: absolute;
@@ -687,6 +707,7 @@ html ::selection {
   opacity: 1;
   filter: blur(0.7rem);
   z-index: 3;
+  display: none;
 }
 .master-info {
   width: 50rem;
@@ -731,6 +752,7 @@ html ::selection {
   object-position: center center;
   top: 0;
   background-color: var(--green-100);
+  display: none;
 }
 .master-fixed-background[src=""] {
   visibility: hidden;
@@ -925,14 +947,22 @@ html ::selection {
     position: fixed;
     top: 0;
     left: -1vw;
-    z-index: 2;
+    z-index: 3;
     display: block;
   }
   .image-foreground {
     display: none;
   }
+  .image-gallery{
+    background-color: var(--green-100);
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
   .image-grid {
     height: unset;
+  }
+  .image-gallery__fixed-image{
+    display: none;
   }
   .image-gallery__action {
     display: flex;
@@ -970,9 +1000,6 @@ html ::selection {
   .one-screen-transparent {
     background-color: transparent;
     height: 100vh;
-  }
-  .image-gallery {
-    background-color: transparent;
   }
 
   .fixed-wrapper {
@@ -1105,6 +1132,9 @@ html ::selection {
   }
   .master-info {
     width: unset;
+  }
+  .master-fixed-background{
+    display: block;
   }
   /* Преимущества */
   .our-advantages__title {
@@ -1258,3 +1288,27 @@ html ::selection {
     padding-top: 20rem;
   }
 }
+
+
+/* .secret-section{
+  height: 360rem;
+  display: flex;
+  flex-flow: column;
+  gap: 60rem;
+}
+.secret-container{
+  width: 100%;
+  height: 70rem;
+  position: relative;
+  background-color: var(--green-100);
+  z-index: 2;
+}
+
+.secret-image{
+  top: 50%;
+  transform: translate(0, -50%);
+  position: fixed;
+  width: 40rem;
+  height: 60rem;
+  z-index: 1;
+} */

@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     gsap.registerPlugin(ScrollTrigger)
     gsap.registerPlugin(MotionPathPlugin)
     startAnimation()
+    imageGalleryAnimation()
     tabs()
     accordeonsInit()
 
@@ -55,6 +56,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     footerAnimation()
     fixedImageAnimation()
     ourMastersAnimation()
+    // secretAnimation()
 });
 
 
@@ -106,6 +108,24 @@ function startAnimation() {
     }
 
 
+}
+function imageGalleryAnimation() {
+    if(isDesktop){
+        let image = document.querySelector('.image-gallery__fixed-image')
+        image.style.display = 'none'
+        gsap.timeline({
+            scrollTrigger:{
+                trigger: '.image-grid__padding-top',
+                start: 'bottom bottom',
+                end: '+='+winHeight*2,
+                // markers: true,
+                onLeave: ()=>{image.style.display = 'none'},
+                onEnter: ()=>{image.style.display = 'block'},
+                onLeaveBack: ()=>{image.style.display = 'none'},
+                onEnterBack: ()=>{image.style.display = 'block'},
+            }
+        })
+    }
 }
 function priceListContentWrapperSetActualSize(source, target, action) {
     let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
@@ -242,9 +262,11 @@ function setFixedText(containers, elementGroups) {
 function turnGreenBackground(backgroundElem) {
     backgroundElem.setAttribute('src', '');
     htmlElem.style.background = "var(--green-100)";
+    backgroundElem.style.display = 'none';
 }
 function turnImageOnBackground(image, backgroundElem) {
     htmlElem.style.background = "none";
+    backgroundElem.style.display = 'block';
     // Если изображение предзагружено, используем его
     if (preloadedImages[image]) {
         backgroundElem.src = preloadedImages[image].src;
@@ -289,7 +311,7 @@ function fixedImageAnimation() {
         let backgroundElem = document.querySelector('.fixed-background')
         setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
     } else {
-        setElementFixed('.fixed-wrapper-1', 2)
+        // setElementFixed('.fixed-wrapper-1', 2)
         setElementFixed('.fixed-wrapper-2', 3)
         setElementFixed('.fixed-wrapper-3', 3)
         setElementFixed('.fixed-wrapper-4', 3)
@@ -367,9 +389,11 @@ function accordeonsInit() {
 
 function ourMastersAnimation() {
     let backgroundElem = document.querySelector('.master-fixed-background')
-    setTriggerOnElement('.one-screen-transparent-2', "second-image.png", backgroundElem)
-    setTriggerOnElement('.one-screen-transparent-3', "third-image.png", backgroundElem)
-    setTriggerOnElement('.one-screen-transparent-4', "second-image.png", backgroundElem)
+    if(isMobile){
+        setTriggerOnElement('.one-screen-transparent-2', "second-image.png", backgroundElem)
+        setTriggerOnElement('.one-screen-transparent-3', "third-image.png", backgroundElem)
+        setTriggerOnElement('.one-screen-transparent-4', "second-image.png", backgroundElem)
+    }
 }
 function iconBtnAnimation() {
     document.querySelectorAll('.icon-btn').forEach(btn => {
@@ -441,6 +465,7 @@ function footerAnimation() {
     let container = document.querySelector('.footer-container');
     footer.style.height = container.getBoundingClientRect().height+ remToPx(5)+'px'
     let startPosition = isMobile ? 'top top' : 'top '+(100-(((footer.getBoundingClientRect().height)/winHeight)*100))+'%'
+    let containerStartYPosition = isMobile ? 0 : '-100%'
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
@@ -448,8 +473,8 @@ function footerAnimation() {
             end: '+='+container.getBoundingClientRect().height,
             scrub: true,
         }
-    }).fromTo(container, {y: '-100%'}, {y: '0', ease: 'none'}, 0)
-    .fromTo('.header', {opacity: 1}, {opacity: 0, ease: 'none'}, 0)
+    }).fromTo(container, {y: containerStartYPosition}, {y: '0', ease: 'none'}, 0)
+    // .fromTo('.header', {opacity: 1}, {opacity: 0, ease: 'none'}, 0)
 }
 function throttle(func, delay) {
     let lastCall = 0;
@@ -462,4 +487,21 @@ function throttle(func, delay) {
             func(...args);
         }
     };
+}
+
+function secretAnimation() {
+    let image = document.querySelector('.secret-image')
+    image.style.display = 'none'
+    gsap.timeline({
+        scrollTrigger:{
+            trigger: '.secret-container.secret-1',
+            start: 'bottom 85%',
+            end: '+='+remToPx(135),
+            // markers: true,
+            onLeave: ()=>{image.style.display = 'none'},
+            onEnter: ()=>{image.style.display = 'block'},
+            onLeaveBack: ()=>{image.style.display = 'none'},
+            onEnterBack: ()=>{image.style.display = 'block'},
+        }
+    })
 }
