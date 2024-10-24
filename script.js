@@ -19,7 +19,6 @@ function remToPx(rem) {
     return rem * fontSize;
 }
 
-let backgroundElem = document.querySelector('.fixed-background')
 let htmlElem = document.querySelector('html')
 
 // Объект для хранения предварительно загруженных изображений
@@ -46,26 +45,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
     accordeonsInit()
 
     fixedTextAnimation()
-    // equipmentAnimation()
     if (isDesktop) {
         iconBtnAnimation()
     }
     servicesSliderInit()
     ourAdvantagesAnimation()
     yandexMapsInit()
-
-
-    if (isMobile) {
-        const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
-        preloadImages(imagesToPreload);
-
-        setTriggerOnElement('.one-screen-transparent-1', "first-image.png")
-        setTriggerOnElement('.one-screen-transparent-2', "second-image.png")
-        setTriggerOnElement('.one-screen-transparent-3', "third-image.png")
-    } else {
-        fixedImageAnimation()
-    }
-
+    // currentYearInit()
+    // footerAnimation()
+    fixedImageAnimation()
+    ourMastersAnimation()
 });
 
 
@@ -250,15 +239,14 @@ function setFixedText(containers, elementGroups) {
 
 }
 
-function turnGreenBackground() {
+function turnGreenBackground(backgroundElem) {
     backgroundElem.setAttribute('src', '');
     htmlElem.style.background = "var(--green-100)";
 }
-function turnImageOnBackground(image) {
+function turnImageOnBackground(image, backgroundElem) {
     htmlElem.style.background = "none";
     // Если изображение предзагружено, используем его
     if (preloadedImages[image]) {
-        console.log();
         backgroundElem.src = preloadedImages[image].src;
     } else {
         // Если изображение не предзагружено, подгружаем его заново
@@ -266,17 +254,17 @@ function turnImageOnBackground(image) {
     }
 }
 
-function setTriggerOnElement(selector, image) {
+function setTriggerOnElement(selector, image, backgroundElem) {
     gsap.timeline({
         scrollTrigger: {
             trigger: selector,
             start: 'top' + ' bottom',
             end: '+=' + (winHeight * 2),
             // markers:true,
-            onEnter: () => turnImageOnBackground(image),
-            onLeave: () => turnGreenBackground(),
-            onEnterBack: () => turnImageOnBackground(image),
-            onLeaveBack: () => turnGreenBackground(),
+            onEnter: () => turnImageOnBackground(image, backgroundElem),
+            onLeave: () => turnGreenBackground(backgroundElem),
+            onEnterBack: () => turnImageOnBackground(image, backgroundElem),
+            onLeaveBack: () => turnGreenBackground(backgroundElem),
         }
     })
 }
@@ -294,10 +282,19 @@ function preloadImages(imageArray) {
 }
 
 function fixedImageAnimation() {
-    setElementFixed('.fixed-wrapper-1', 2)
-    setElementFixed('.fixed-wrapper-2', 3)
-    setElementFixed('.fixed-wrapper-3', 3)
-    setElementFixed('.fixed-wrapper-4', 3)
+    if (isMobile) {
+        const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
+        preloadImages(imagesToPreload);
+        
+        let backgroundElem = document.querySelector('.fixed-background')
+        setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
+    } else {
+        setElementFixed('.fixed-wrapper-1', 2)
+        setElementFixed('.fixed-wrapper-2', 3)
+        setElementFixed('.fixed-wrapper-3', 3)
+        setElementFixed('.fixed-wrapper-4', 3)
+    }
+
 }
 
 function setElementFixed(selector, selfRelativeScrolls) {
@@ -368,30 +365,12 @@ function accordeonsInit() {
     }
 }
 
-function equipmentAnimation() {
-    if (isMobile) {
-        // фиксируем текст
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.our-equipment__title',
-                start: 'top bottom',
-                end: '+=' + winHeight / 2,
-                scrub: true,
-            }
-        }).fromTo('.our-equipment__title', { y: '300%' }, { y: '0' })
-    } else {
-        // фиксируем текст
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.equipment-info',
-                start: 'top 2%',
-                end: '+=' + remToPx(64),
-                pin: true,
-            }
-        })
-    }
+function ourMastersAnimation() {
+    let backgroundElem = document.querySelector('.master-fixed-background')
+    setTriggerOnElement('.one-screen-transparent-2', "second-image.png", backgroundElem)
+    setTriggerOnElement('.one-screen-transparent-3', "third-image.png", backgroundElem)
+    setTriggerOnElement('.one-screen-transparent-4', "second-image.png", backgroundElem)
 }
-
 function iconBtnAnimation() {
     document.querySelectorAll('.icon-btn').forEach(btn => {
         let icon = btn.querySelector('.icon-btn__icon');
@@ -421,12 +400,21 @@ function iconBtnAnimation() {
 }
 
 function yandexMapsInit() {
-    setElementFixed('.fixed-wrapper-5', 1)
+    let mapSelector
+    let zoomInitValue
+    if(isMobile){
+        mapSelector = 'mobileMap'
+        zoomInitValue = 12
+    } else{
+        setElementFixed('.fixed-wrapper-5', 1)
+        mapSelector = 'map'
+        zoomInitValue = 13
+    }
     ymaps.ready(init);
     function init() {
-        let myMap = new ymaps.Map("map", {
+        let myMap = new ymaps.Map(mapSelector, {
             center: [54.991280, 73.352493],
-            zoom: 13
+            zoom: zoomInitValue
         });
         
 
@@ -443,6 +431,25 @@ function yandexMapsInit() {
     }
 }
 
+function currentYearInit() {
+    let currentDate = new Date;
+    document.querySelector('.currentYear').innerHTML = currentDate.getFullYear();
+}
+
+function footerAnimation() {
+    let footer = document.querySelector('.footer');
+    let container = document.querySelector('.footer-container');
+    footer.style.height = container.getBoundingClientRect().height+ remToPx(10)+'px'
+    container.style.top = '-'+container.getBoundingClientRect().height + remToPx(5)+'px'
+    gsap.timeline({
+        scrollTrigger: {
+            trigger: container,
+            start: 'top '+(100-((footer.getBoundingClientRect().height/winHeight)*100))+'%',
+            end: '+='+container.getBoundingClientRect().height + remToPx(5),
+            scrub: true,
+        }
+    }).fromTo(container, {y: '-100%'}, {y: '0'})
+}
 function throttle(func, delay) {
     let lastCall = 0;
 
