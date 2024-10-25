@@ -268,8 +268,8 @@ function turnImageOnBackground(image, backgroundElem) {
     htmlElem.style.background = "none";
     backgroundElem.style.display = 'block';
 
-    var basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
-    var path = basePath + 'assets/' + image;
+    let basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
+    let path = basePath + 'assets/' + image;
     // Если изображение предзагружено, используем его
     if (preloadedImages[image]) {
         backgroundElem.src = preloadedImages[image].src;
@@ -298,7 +298,9 @@ function setTriggerOnElement(selector, image, backgroundElem) {
 function preloadImages(imageArray) {
     imageArray.forEach(image => {
         const img = new Image();
-        img.src = '/assets/' + image; // Загрузка изображения по указанному пути
+        let basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
+        let path = basePath + 'assets/' + image;
+        img.src = path; // Загрузка изображения по указанному пути
 
         // Сохраняем загруженное изображение в объект для дальнейшего использования
         preloadedImages[image] = img;
