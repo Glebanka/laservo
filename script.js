@@ -110,15 +110,18 @@ function startAnimation() {
 
 }
 function imageGalleryAnimation() {
+    console.log(winHeight);
+    
     if (isDesktop) {
         let image = document.querySelector('.image-gallery__fixed-image')
+        let container = document.querySelector('.image-gallery')
         image.style.display = 'none'
         gsap.timeline({
             scrollTrigger: {
                 trigger: '.image-grid__padding-top',
                 start: 'bottom bottom',
-                end: '+=' + winHeight * 2,
-                // markers: true,
+                end: '+=' + container.getBoundingClientRect().height * 2,
+                markers: true,
                 onLeave: () => { image.style.display = 'none' },
                 onEnter: () => { image.style.display = 'block' },
                 onLeaveBack: () => { image.style.display = 'none' },

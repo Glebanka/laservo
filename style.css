@@ -271,8 +271,8 @@ html ::selection {
   object-fit: cover;
   object-position: 50% 50%;
 }
-.image-grid__padding-top{
-  padding-top: 20rem;
+.containers-separator{
+  height: 20rem;
   width: 100%;
   background-color: var(--green-100);
   position: relative;
