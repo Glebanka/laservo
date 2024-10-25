@@ -121,7 +121,7 @@ function imageGalleryAnimation() {
                 trigger: '.image-grid__padding-top',
                 start: 'bottom bottom',
                 end: '+=' + container.getBoundingClientRect().height * 2,
-                markers: true,
+                // markers: true,
                 onLeave: () => { image.style.display = 'none' },
                 onEnter: () => { image.style.display = 'block' },
                 onLeaveBack: () => { image.style.display = 'none' },
