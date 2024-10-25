@@ -110,19 +110,19 @@ function startAnimation() {
 
 }
 function imageGalleryAnimation() {
-    if(isDesktop){
+    if (isDesktop) {
         let image = document.querySelector('.image-gallery__fixed-image')
         image.style.display = 'none'
         gsap.timeline({
-            scrollTrigger:{
+            scrollTrigger: {
                 trigger: '.image-grid__padding-top',
                 start: 'bottom bottom',
-                end: '+='+winHeight*2,
+                end: '+=' + winHeight * 2,
                 // markers: true,
-                onLeave: ()=>{image.style.display = 'none'},
-                onEnter: ()=>{image.style.display = 'block'},
-                onLeaveBack: ()=>{image.style.display = 'none'},
-                onEnterBack: ()=>{image.style.display = 'block'},
+                onLeave: () => { image.style.display = 'none' },
+                onEnter: () => { image.style.display = 'block' },
+                onLeaveBack: () => { image.style.display = 'none' },
+                onEnterBack: () => { image.style.display = 'block' },
             }
         })
     }
@@ -267,12 +267,15 @@ function turnGreenBackground(backgroundElem) {
 function turnImageOnBackground(image, backgroundElem) {
     htmlElem.style.background = "none";
     backgroundElem.style.display = 'block';
+
+    var basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
+    var path = basePath + 'assets/' + image;
     // Если изображение предзагружено, используем его
     if (preloadedImages[image]) {
         backgroundElem.src = preloadedImages[image].src;
     } else {
         // Если изображение не предзагружено, подгружаем его заново
-        backgroundElem.setAttribute('src', 'assets/' + image);
+        backgroundElem.setAttribute('src', path);
     }
 }
 
@@ -307,7 +310,7 @@ function fixedImageAnimation() {
     if (isMobile) {
         const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
         preloadImages(imagesToPreload);
-        
+
         let backgroundElem = document.querySelector('.fixed-background')
         setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
     } else {
@@ -389,7 +392,7 @@ function accordeonsInit() {
 
 function ourMastersAnimation() {
     let backgroundElem = document.querySelector('.master-fixed-background')
-    if(isMobile){
+    if (isMobile) {
         setTriggerOnElement('.one-screen-transparent-2', "second-image.png", backgroundElem)
         setTriggerOnElement('.one-screen-transparent-3', "third-image.png", backgroundElem)
         setTriggerOnElement('.one-screen-transparent-4', "second-image.png", backgroundElem)
@@ -426,10 +429,10 @@ function iconBtnAnimation() {
 function yandexMapsInit() {
     let mapSelector
     let zoomInitValue
-    if(isMobile){
+    if (isMobile) {
         mapSelector = 'mobileMap'
         zoomInitValue = 12
-    } else{
+    } else {
         setElementFixed('.fixed-wrapper-5', 1)
         mapSelector = 'map'
         zoomInitValue = 13
@@ -440,7 +443,7 @@ function yandexMapsInit() {
             center: [54.991280, 73.352493],
             zoom: zoomInitValue
         });
-        
+
 
         let myPlacemark = new ymaps.Placemark([54.985581, 73.311039], {}, {
             iconLayout: 'default#image',
@@ -463,17 +466,17 @@ function currentYearInit() {
 function footerAnimation() {
     let footer = document.querySelector('.footer');
     let container = document.querySelector('.footer-container');
-    footer.style.height = container.getBoundingClientRect().height+ remToPx(5)+'px'
-    let startPosition = isMobile ? 'top top' : 'top '+(100-(((footer.getBoundingClientRect().height)/winHeight)*100))+'%'
+    footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
+    let startPosition = isMobile ? 'top top' : 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
     let containerStartYPosition = isMobile ? 0 : '-100%'
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
             start: startPosition,
-            end: '+='+container.getBoundingClientRect().height,
+            end: '+=' + container.getBoundingClientRect().height,
             scrub: true,
         }
-    }).fromTo(container, {y: containerStartYPosition}, {y: '0', ease: 'none'}, 0)
+    }).fromTo(container, { y: containerStartYPosition }, { y: '0', ease: 'none' }, 0)
     // .fromTo('.header', {opacity: 1}, {opacity: 0, ease: 'none'}, 0)
 }
 function throttle(func, delay) {
@@ -493,15 +496,15 @@ function secretAnimation() {
     let image = document.querySelector('.secret-image')
     image.style.display = 'none'
     gsap.timeline({
-        scrollTrigger:{
+        scrollTrigger: {
             trigger: '.secret-container.secret-1',
             start: 'bottom 85%',
-            end: '+='+remToPx(135),
+            end: '+=' + remToPx(135),
             // markers: true,
-            onLeave: ()=>{image.style.display = 'none'},
-            onEnter: ()=>{image.style.display = 'block'},
-            onLeaveBack: ()=>{image.style.display = 'none'},
-            onEnterBack: ()=>{image.style.display = 'block'},
+            onLeave: () => { image.style.display = 'none' },
+            onEnter: () => { image.style.display = 'block' },
+            onLeaveBack: () => { image.style.display = 'none' },
+            onEnterBack: () => { image.style.display = 'block' },
         }
     })
 }
