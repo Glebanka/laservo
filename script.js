@@ -272,7 +272,7 @@ function turnImageOnBackground(image, backgroundElem) {
         backgroundElem.src = preloadedImages[image].src;
     } else {
         // Если изображение не предзагружено, подгружаем его заново
-        backgroundElem.setAttribute('src', '/assets/' + image);
+        backgroundElem.setAttribute('src', 'assets/' + image);
     }
 }
 
