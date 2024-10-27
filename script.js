@@ -42,8 +42,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     gsap.registerPlugin(MotionPathPlugin)
     startAnimation()
     imageGalleryAnimation()
-    tabs()
-    accordeonsInit()
+    priceListInit()
 
     fixedTextAnimation()
     if (isDesktop) {
@@ -110,8 +109,7 @@ function startAnimation() {
 
 }
 function imageGalleryAnimation() {
-    console.log(winHeight);
-    
+
     if (isDesktop) {
         let image = document.querySelector('.image-gallery__fixed-image')
         let container = document.querySelector('.image-gallery')
@@ -130,67 +128,132 @@ function imageGalleryAnimation() {
         })
     }
 }
-function priceListContentWrapperSetActualSize(source, target, action) {
-    let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
-    // Если вызов был сделан из таба, то мы врапперу ставим такую же высоту как у активного элемента
-    if (source == 'tab') {
-        priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
-    } else if (source == 'accordeon') {
-        // Если мобилка, то ставим первое значение, иначе второе
-        let priceListItemBodyMargin = (isMobile) ? remToPx(3) : remToPx(5)
-        let priceListItemBodyHeight = getHeight(target.querySelector('.price-list-item__body')) + priceListItemBodyMargin
 
-        if (action == 'addHeight') {
-            priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) + priceListItemBodyHeight) + "px"
-        } else if (action == 'delHeight') {
-            priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) - priceListItemBodyHeight) + "px"
-        }
-
-        setTimeout(
-            () => { priceListContentWrapper.style.height = getHeight(document.querySelector('.price-list-content.active')) + 'px' }
-            , 201)
-    }
-
-    setTimeout(() => {
-        refreshAllAnimations()
-    }, 1001);
-
-    function getHeight(element) {
-        return element.getBoundingClientRect().height;
-    }
-}
-function tabs() {
-    document.querySelectorAll('.tab').forEach(tab => {
-        const tabsContainer = tab.parentElement;
-        tab.onclick = () => {
-            setTimeout(() => {
-                refreshAllAnimations()
-            }, 1001);
-            if (!tab.classList.contains('active')) {
-                tab.classList.add('active')
-                tabsContainer.querySelectorAll('.tab').forEach(otherTab => {
-                    if (otherTab !== tab) {
-                        otherTab.classList.remove('active');
+function priceListInit(){
+    function tabsInit() {
+        document.querySelectorAll('.tab').forEach(tab => {
+            const tabsContainer = tab.parentElement;
+            tab.onclick = () => {
+                setTimeout(() => {
+                    refreshAllAnimations()
+                }, 1001);
+                if (!tab.classList.contains('active')) {
+                    tab.classList.add('active')
+                    tabsContainer.querySelectorAll('.tab').forEach(otherTab => {
+                        if (otherTab !== tab) {
+                            otherTab.classList.remove('active');
+                        }
+                    });
+                    document.querySelectorAll('.price-list-content').forEach(elem => {
+                        elem.classList.remove('active')
+                    })
+                    let content = document.querySelector('.price-list-content-' + tab.dataset.contentId)
+                    content.classList.add('active')
+    
+                    let activeAccordeon = findActiveAccordeon()
+                    if (activeAccordeon) {
+                        closeAccordeon(activeAccordeon)
                     }
-                });
-                document.querySelectorAll('.price-list-content').forEach(elem => {
-                    elem.classList.remove('active')
-                })
-                let content = document.querySelector('.price-list-content-' + tab.dataset.contentId)
-                content.classList.add('active')
-
-                priceListContentWrapperSetActualSize('tab')
-                if (tab.dataset.contentId == 1) {
-                    gsap.timeline().to('.price-list-content-wrapper', { x: 0, ease: "back.out(1.5)", duration: 1 })
-                } else if (tab.dataset.contentId == 2) {
-                    gsap.timeline().to('.price-list-content-wrapper', { x: "-50%", ease: "back.in(1.5)", duration: 1 })
-                } else {
-                    gsap.timeline().to('.price-list-content-wrapper', { x: "-100%", ease: "back.in(1.5)", duration: 1 })
+                    setPriceListHeight('tab')
+                    if (tab.dataset.contentId == 1) {
+                        gsap.timeline().to('.price-list-content-wrapper', { x: 0, ease: "back.out(1.5)", duration: 1 })
+                    } else if (tab.dataset.contentId == 2) {
+                        gsap.timeline().to('.price-list-content-wrapper', { x: "-50%", ease: "back.in(1.5)", duration: 1 })
+                    } else {
+                        gsap.timeline().to('.price-list-content-wrapper', { x: "-100%", ease: "back.in(1.5)", duration: 1 })
+                    }
+    
                 }
-
             }
+        });
+    }
+    function accordeonsInit() {
+        const accordeons = document.querySelectorAll('.price-list-item');
+        if (accordeons) {
+            accordeons.forEach(accordeon => {
+                let accordeonBody = accordeon.querySelector('.price-list-item__body')
+    
+                // убираем возможность кликать внутри
+                accordeonBody.onclick = (e) => e.stopPropagation();
+    
+                accordeon.onclick = () => {
+                    if (accordeon.classList.contains('active')) {
+                        closeAccordeon(accordeon)
+                        setPriceListHeight('accordeon', accordeon, 'delHeight')
+                    } else {
+                        // проходимся второй раз по элементам и ищем уже активный
+                        let activeAccordeon = findActiveAccordeon()
+    
+                        if (activeAccordeon) {
+                            closeAccordeon(activeAccordeon)
+                            openAccordeon(accordeon)
+                        } else {
+                            openAccordeon(accordeon)
+                            setPriceListHeight('accordeon', accordeon, 'addHeight')
+                        }
+                    }
+                    setTimeout(refreshAllAnimations, 201);
+                }
+            })
         }
-    });
+    }
+    function accordeonSetActualSize(accordeon) {
+        let accordeonBody = accordeon.querySelector('.price-list-item__body')
+        accordeon.style.height = accordeonBody.getBoundingClientRect().height + parseFloat(getComputedStyle(accordeonBody).marginTop) + remToPx(6.1) + 'px'
+    }
+    function findActiveAccordeon() {
+        let activeAccordeon
+        document.querySelectorAll('.price-list-item').forEach(accordeon => {
+            if (accordeon.classList.contains('active')) {
+                activeAccordeon = accordeon
+            }
+        })
+        return activeAccordeon
+    }
+    function closeAccordeon(accordeon) {
+        accordeon.classList.remove('active');
+        accordeon.style.height = remToPx(6.1) + "px"
+        // анимируем иконку
+        gsap.timeline().to(accordeon.querySelector('.price-list-item__icon'), { rotate: 0, transformOrigin: "center" }, 0)
+    }
+    function openAccordeon(accordeon) {
+        accordeon.classList.add('active');
+        accordeonSetActualSize(accordeon)
+        // анимируем иконку
+        gsap.timeline().to(accordeon.querySelector('.price-list-item__icon'), { rotate: 45, transformOrigin: "center" }, 0)
+    }
+    function setPriceListHeight(source, target, action) {
+        let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
+        // Если вызов был сделан из таба, то мы врапперу ставим такую же высоту как у активного элемента
+        if (source == 'tab') {
+            priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
+        } else if (source == 'accordeon') {
+            // Если мобилка, то ставим первое значение, иначе второе
+            let priceListItemBodyMargin = (isMobile) ? remToPx(3) : remToPx(5)
+            let priceListItemBodyHeight = getHeight(target.querySelector('.price-list-item__body')) + priceListItemBodyMargin
+    
+            if (action == 'addHeight') {
+                priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) + priceListItemBodyHeight) + "px"
+            } else if (action == 'delHeight') {
+                priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) - priceListItemBodyHeight) + "px"
+            }
+    
+            setTimeout(
+                () => { priceListContentWrapper.style.height = getHeight(document.querySelector('.price-list-content.active')) + 'px' }
+                , 201)
+        }
+    
+        setTimeout(() => {
+            refreshAllAnimations()
+        }, 1001);
+    
+        function getHeight(element) {
+            return element.getBoundingClientRect().height;
+        }
+    }
+    
+    accordeonsInit()
+    tabsInit()
 }
 
 function fixedTextAnimation() {
@@ -222,7 +285,7 @@ function setFixedText(containers, elementGroups) {
     gsap.timeline({
         scrollTrigger: {
             trigger: containers[1],
-            start: '-30% top',
+            start: 'top top',
             onEnter: () => { gsap.timeline().to(firstElem, { opacity: 1, duration: 0.3 }, 0) },
         }
     })
@@ -239,11 +302,11 @@ function setFixedText(containers, elementGroups) {
 
         function changeOpacity() {
             gsap.timeline().fromTo(firstElem, { opacity: 1 }, { opacity: 0, duration: 0.3 }, 0)
-                .fromTo(secondElem, { y: "50%", opacity: 0 }, { opacity: 1, duration: 0.3, y: 0 }, 0)
+                .fromTo(secondElem, { y: "100%", opacity: 0 }, { opacity: 1, duration: 0.3, y: 0 }, 0)
         }
         function changeOpacityBack() {
             gsap.timeline().fromTo(firstElem, { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0)
-                .fromTo(secondElem, { y: 0, opacity: 1 }, { opacity: 0, duration: 0.3, y: '50%' }, 0)
+                .fromTo(secondElem, { y: 0, opacity: 1 }, { opacity: 0, duration: 0.3, y: '100%' }, 0)
         }
     }
     containers.forEach(container => {
@@ -315,9 +378,15 @@ function fixedImageAnimation() {
     if (isMobile) {
         const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
         preloadImages(imagesToPreload);
-
+        
         let backgroundElem = document.querySelector('.fixed-background')
         setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
+
+        let mastersBackgroundElem = document.querySelector('.master-fixed-background')
+        setTriggerOnElement('.one-screen-transparent-2', "second-image.png", mastersBackgroundElem)
+        setTriggerOnElement('.one-screen-transparent-3', "third-image.png", mastersBackgroundElem)
+        setTriggerOnElement('.one-screen-transparent-4', "second-image.png", mastersBackgroundElem)
+
     } else {
         // setElementFixed('.fixed-wrapper-1', 2)
         setElementFixed('.fixed-wrapper-2', 3)
@@ -360,49 +429,6 @@ function servicesSliderInit() {
     })
 }
 
-function accordeonsInit() {
-    if (document.querySelectorAll('.price-list-item')) {
-        document.querySelectorAll('.price-list-item').forEach(accordeon => {
-            let icon = accordeon.querySelector('.price-list-item__icon')
-            accordeon.querySelector('.price-list-item__body').onclick = (e) => {
-                e.stopPropagation();
-            };
-            accordeon.onclick = () => {
-                setTimeout(() => {
-                    refreshAllAnimations()
-                }, 201);
-                accordeon.classList.toggle('active');
-                if (accordeon.classList.contains('active')) {
-                    if (isMobile) {
-                        accordeon.style.height = accordeon.querySelector('.price-list-item__body').offsetHeight + remToPx(9.1) + "px"
-                        priceListContentWrapperSetActualSize('accordeon', accordeon, 'addHeight')
-                    } else {
-                        accordeon.style.height = accordeon.querySelector('.price-list-item__body').offsetHeight + remToPx(11.1) + "px"
-                        priceListContentWrapperSetActualSize('accordeon', accordeon, 'addHeight')
-                    }
-
-                    // анимируем иконку
-                    gsap.timeline().to(icon, { rotate: 45, transformOrigin: "center" }, 0)
-                } else {
-                    accordeon.style.height = remToPx(6.1) + "px"
-                    priceListContentWrapperSetActualSize('accordeon', accordeon, 'delHeight')
-                    // анимируем иконку
-                    gsap.timeline().to(icon, { rotate: 0, transformOrigin: "center" }, 0)
-                }
-
-            }
-        })
-    }
-}
-
-function ourMastersAnimation() {
-    let backgroundElem = document.querySelector('.master-fixed-background')
-    if (isMobile) {
-        setTriggerOnElement('.one-screen-transparent-2', "second-image.png", backgroundElem)
-        setTriggerOnElement('.one-screen-transparent-3', "third-image.png", backgroundElem)
-        setTriggerOnElement('.one-screen-transparent-4', "second-image.png", backgroundElem)
-    }
-}
 function iconBtnAnimation() {
     document.querySelectorAll('.icon-btn').forEach(btn => {
         let icon = btn.querySelector('.icon-btn__icon');

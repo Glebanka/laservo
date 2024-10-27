@@ -366,15 +366,6 @@ html ::selection {
   margin-top: 6rem;
 }
 
-.service:hover .service-bg_half-opacity {
-  transform: translate(0);
-  transition: transform 0.5s;
-}
-.service:hover .service-bg_full-opacity {
-  transform: translate(0);
-  transition: transform 0.5s 0.25s;
-}
-
 /* услуги */
 .services {
   z-index: 1;
@@ -429,7 +420,7 @@ html ::selection {
   opacity: 0.5;
   transform: translate(0, 101%);
   background: var(--green-600);
-  transition: transform 0.5s 0.25s;
+  transition: transform 0.5s 0.05s;
 }
 .service-bg_full-opacity {
   width: 25rem;
@@ -438,6 +429,14 @@ html ::selection {
   transform: translate(0, 101%);
   background: var(--green-600);
   transition: transform 0.5s;
+}
+.service:hover .service-bg_half-opacity {
+  transform: translate(0);
+  transition: transform 0.5s;
+}
+.service:hover .service-bg_full-opacity {
+  transform: translate(0);
+  transition: transform 0.5s 0.05s;
 }
 /* услуги конец */
 
@@ -495,10 +494,10 @@ html ::selection {
   line-height: 1;
   opacity: 0.5;
   cursor: pointer;
-
-  &.active {
-    opacity: 1;
-  }
+}
+.tab.active{
+  opacity: 1;
+  cursor: default;
 }
 .tab__divider {
   font-size: 2.4rem;
