@@ -629,6 +629,7 @@ html ::selection {
 }
 .our-masters-text-container {
   padding-top: 30rem;
+  padding-bottom: 50rem;
   background-color: var(--green-100);
   display: flex;
   align-items: center;
@@ -676,9 +677,7 @@ html ::selection {
   height: 60rem;
   position: relative;
 }
-.master-image_start {
-  height: 90rem;
-}
+.master-image_start,
 .master-image_center {
   height: 120rem;
   position: absolute;
@@ -1104,6 +1103,9 @@ html ::selection {
   }
 
   /* наши мастера */
+  .our-masters-text-container{
+    padding-bottom: 30rem;
+  }
   .our-masters-title {
     font-size: 4rem;
     line-height: 1;
