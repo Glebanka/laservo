@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     // functions calling:
     gsap.registerPlugin(ScrollTrigger)
-    gsap.registerPlugin(MotionPathPlugin)
+    ScrollTrigger.normalizeScroll(true);
     startAnimation()
     imageGalleryAnimation()
     priceListInit()
@@ -50,11 +50,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
     servicesSliderInit()
     ourAdvantagesAnimation()
-    // yandexMapsInit()
+    yandexMapsInit()
     currentYearInit()
     footerAnimation()
     fixedImageAnimation()
-    ourMastersAnimation()
+    // ourMastersAnimation()
     // secretAnimation()
 });
 
@@ -399,12 +399,12 @@ function fixedImageAnimation() {
 function setElementFixed(selector, selfRelativeScrolls) {
     let elem = document.querySelector(selector)
     let container = elem.querySelector('.fixed-container')
-    let containerHeight = container.clientHeight
+    let containerHeight = container.getBoundingClientRect().height
 
 
     let endYPosition
     if (selfRelativeScrolls > 1) {
-        endYPosition = (selfRelativeScrolls - 1) + '00%'
+        endYPosition = (selfRelativeScrolls - 1) * 100+"%"
     } else {
         endYPosition = '0'
     }
@@ -458,29 +458,84 @@ function iconBtnAnimation() {
 }
 
 function yandexMapsInit() {
+    let mapContainer  = document.querySelector('.map-wrapper')
+    let addressesContainer = document.querySelector('.addresses-list__wrapper')
+
+    // Вычисляем коэффициенты для относительной высоты
+    let heightRatio  = addressesContainer.getBoundingClientRect().height / mapContainer.getBoundingClientRect().height
+    let inverseHeightRatio  = mapContainer.getBoundingClientRect().height / addressesContainer.getBoundingClientRect().height
+
+    let fixedContentContainer  = mapContainer.querySelector('.fixed-container')
+
+    // Устанавливаем высоту для mapContainer, равную высоте addressesContainer
+    mapContainer.style.height = addressesContainer.getBoundingClientRect().height + 'px'
+    // Устанавливаем относительную высоту для fixedContentContainer на основе обратного коэффициента
+    fixedContentContainer.style.height = inverseHeightRatio * 100 + '%'
+    
     let mapSelector
     let zoomInitValue
     if (isMobile) {
         mapSelector = 'mobileMap'
         zoomInitValue = 12
     } else {
-        setElementFixed('.fixed-wrapper-5', 1)
+        setElementFixed('.fixed-wrapper-5', heightRatio)
         mapSelector = 'map'
         zoomInitValue = 13
     }
     ymaps.ready(init);
     function init() {
         let myMap = new ymaps.Map(mapSelector, {
-            center: [54.991280, 73.352493],
-            zoom: zoomInitValue
+            center: [54.989431, 73.337176],
+            zoom: zoomInitValue,
+            controls: ['geolocationControl', 'fullscreenControl', 'zoomControl'],
+        },{
+            suppressMapOpenBlock: true
         });
 
 
-        let myPlacemark = new ymaps.Placemark([54.985581, 73.311039], {}, {
+        let myPlacemark = new ymaps.Placemark([54.985581, 73.311039], {
+            balloonContentBody: [
+                `<div class="maps-title">Laser Vo</div>
+                <div class="maps-address">г. Омск, ул. 70 лет Октября, 7</div>
+                <a target='_blank' href="https://yandex.ru/maps/org/laser_vo/39594167357/?indoorLevel=1&ll=73.310846%2C54.985344&z=17" class="maps-link maps-link_small-gap">
+                    <svg class='map-icon_small' width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.0002 1C5.13994 1 1.2002 4.93978 1.2002 9.79998C1.2002 12.2293 2.18448 14.4288 3.77643 16.0211C5.36878 17.6144 9.1202 19.92 9.34016 22.34C9.37319 22.7028 9.63589 23 10.0002 23C10.3645 23 10.6272 22.7028 10.6602 22.34C10.8802 19.92 14.6316 17.6144 16.224 16.0211C17.8159 14.4288 18.8002 12.2293 18.8002 9.79998C18.8002 4.93978 14.8604 1 10.0002 1Z" fill="url(#paint0_linear_1902_222)"/>
+                        <path d="M10.0004 12.8807C11.7014 12.8807 13.0804 11.5017 13.0804 9.8007C13.0804 8.09964 11.7014 6.7207 10.0004 6.7207C8.29935 6.7207 6.92041 8.09964 6.92041 9.8007C6.92041 11.5017 8.29935 12.8807 10.0004 12.8807Z" fill="white"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_1902_222" x1="10.0002" y1="1" x2="10.0002" y2="23" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#FF6122"/>
+                                <stop offset="1" stop-color="#F22411"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="maps-link__text maps-link__text_long">Посмотреть на яндекс картах</div>
+                </a>
+                `,
+                ].join('')
+        }, {
             iconLayout: 'default#image',
             iconImageHref: 'assets/mapPlacemark.svg',
         });
-        let myPlacemark2 = new ymaps.Placemark([54.994796, 73.368934], {}, {
+        let myPlacemark2 = new ymaps.Placemark([54.994796, 73.368934], {
+            balloonContentBody: [
+                `<div class="maps-title">Laser Vo</div>
+                <div class="maps-address">г. Омск, ул. Тарская, 34</div>
+                <a target='_blank' href="https://yandex.ru/maps/org/laser_vo/105190041944/?ll=73.368934%2C54.994799&z=14" class="maps-link maps-link_small-gap">
+                    <svg class='map-icon_small' width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.0002 1C5.13994 1 1.2002 4.93978 1.2002 9.79998C1.2002 12.2293 2.18448 14.4288 3.77643 16.0211C5.36878 17.6144 9.1202 19.92 9.34016 22.34C9.37319 22.7028 9.63589 23 10.0002 23C10.3645 23 10.6272 22.7028 10.6602 22.34C10.8802 19.92 14.6316 17.6144 16.224 16.0211C17.8159 14.4288 18.8002 12.2293 18.8002 9.79998C18.8002 4.93978 14.8604 1 10.0002 1Z" fill="url(#paint0_linear_1902_222)"/>
+                        <path d="M10.0004 12.8807C11.7014 12.8807 13.0804 11.5017 13.0804 9.8007C13.0804 8.09964 11.7014 6.7207 10.0004 6.7207C8.29935 6.7207 6.92041 8.09964 6.92041 9.8007C6.92041 11.5017 8.29935 12.8807 10.0004 12.8807Z" fill="white"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_1902_222" x1="10.0002" y1="1" x2="10.0002" y2="23" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#FF6122"/>
+                                <stop offset="1" stop-color="#F22411"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="maps-link__text maps-link__text_long">Посмотреть на яндекс картах</div>
+                </a>
+                `,
+                ].join('')
+        }, {
             iconLayout: 'default#image',
             iconImageHref: 'assets/mapPlacemark.svg',
         });
@@ -521,21 +576,4 @@ function throttle(func, delay) {
             func(...args);
         }
     };
-}
-
-function secretAnimation() {
-    let image = document.querySelector('.secret-image')
-    image.style.display = 'none'
-    gsap.timeline({
-        scrollTrigger: {
-            trigger: '.secret-container.secret-1',
-            start: 'bottom 85%',
-            end: '+=' + remToPx(135),
-            // markers: true,
-            onLeave: () => { image.style.display = 'none' },
-            onEnter: () => { image.style.display = 'block' },
-            onLeaveBack: () => { image.style.display = 'none' },
-            onEnterBack: () => { image.style.display = 'block' },
-        }
-    })
 }

@@ -140,6 +140,10 @@ html ::selection {
 }
 /* Хедер конец */
 
+.burger-btn{
+  display: none;
+}
+
 /* главный баннер */
 .main-banner {
   height: 150vh;
@@ -776,7 +780,7 @@ html ::selection {
   gap: 5rem;
   position: relative;
   z-index: 1;
-  padding-bottom: 54.6rem;
+  padding-bottom: 25rem;
 }
 .address-item {
   width: 70rem;
@@ -784,10 +788,98 @@ html ::selection {
 .addresses-list__wrapper {
   display: flex;
   flex-flow: column;
+  gap: 6rem;
 }
 .addresses-list__title {
   font-size: 4rem;
   line-height: 1;
+}
+.address-item{
+  display: flex;
+  flex-flow: column;
+}
+.address-title{
+  font-size: 2.4rem;
+  line-height: 1;
+  padding: 1rem 0;
+  border-top: var(--green-600) .1rem solid;
+  border-bottom: var(--green-600) .1rem solid;
+}
+.address-info-container{
+  margin-top: 2rem;
+  display: flex;
+  flex-flow: column;
+  gap: 4rem;
+}
+.address-info-list{
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.address-info-item{
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.address-maps-info{
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.address-rating{
+  display: flex;
+  gap: 1rem;
+}
+.address-rating-icon{
+  width: 10rem;
+  height: 2rem;
+}
+.rating-info{
+  display: flex;
+  gap: .5rem;
+}
+.rating-quantity, .rating-value{
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.maps-link{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.maps-link_small-gap{
+  gap: 0.5rem;
+}
+.map-icon{
+  width: 3rem;
+  height: 3rem;
+}
+.map-icon_small{
+  width: 1.2rem;
+  height: 1.44rem;
+}
+.maps-link__text{
+  font-size: 1.2rem;
+  line-height: 1;
+  width: 10rem;
+  letter-spacing: 0.02em;
+}
+.maps-link__text_long{
+  width: unset;
+}
+.address-btn{
+  width: fit-content;
+}
+.maps-title{
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+.maps-address{
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-bottom: 1rem;
 }
 .map-wrapper {
   width: 75rem;
@@ -932,6 +1024,15 @@ html ::selection {
   .header__burger {
     display: none;
   }
+  .burger-btn{
+    display: block;
+    width: 7.4rem;
+    height: 10rem;
+    position: fixed;
+    right: 1rem;
+    bottom: 3.5rem;
+    z-index: 3;
+  }
 
   .main-banner {
     height: 200vh;
@@ -940,11 +1041,11 @@ html ::selection {
     width: 36rem;
   }
   .mob-image-foreground {
-    width: 102vw;
-    height: 122.4rem;
+    width: 108rem;
+    height: 156rem;
     position: fixed;
-    top: 0;
-    left: -1vw;
+    top: -15rem;
+    left: -36rem;
     z-index: 3;
     display: block;
   }
@@ -1289,27 +1390,3 @@ html ::selection {
     padding-top: 20rem;
   }
 }
-
-
-/* .secret-section{
-  height: 360rem;
-  display: flex;
-  flex-flow: column;
-  gap: 60rem;
-}
-.secret-container{
-  width: 100%;
-  height: 70rem;
-  position: relative;
-  background-color: var(--green-100);
-  z-index: 2;
-}
-
-.secret-image{
-  top: 50%;
-  transform: translate(0, -50%);
-  position: fixed;
-  width: 40rem;
-  height: 60rem;
-  z-index: 1;
-} */
