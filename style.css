@@ -424,7 +424,7 @@ html ::selection {
   opacity: 0.5;
   transform: translate(0, 101%);
   background: var(--green-600);
-  transition: transform 0.5s 0.05s;
+  transition: transform 0.5s 0.2s;
 }
 .service-bg_full-opacity {
   width: 25rem;
@@ -440,7 +440,7 @@ html ::selection {
 }
 .service:hover .service-bg_full-opacity {
   transform: translate(0);
-  transition: transform 0.5s 0.05s;
+  transition: transform 0.5s 0.2s;
 }
 /* услуги конец */
 

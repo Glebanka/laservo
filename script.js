@@ -553,8 +553,10 @@ function footerAnimation() {
     let footer = document.querySelector('.footer');
     let container = document.querySelector('.footer-container');
     footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
-    let startPosition = isMobile ? 'top top' : 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
-    let containerStartYPosition = isMobile ? 0 : '-100%'
+    let startPosition ='top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
+    // isMobile ? 'top top' : 
+    let containerStartYPosition =  '-100%'
+    // isMobile ? 0 :
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
