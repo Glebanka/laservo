@@ -2,10 +2,11 @@
   --green-900: #020a09;
   --green-600: #7a804a;
   --green-100: #d3d8b3;
-  --red-600: #9f252b;
+  --red-600: #AE242C;
   --white: #ffffff;
   --optima: "Optima", sans-serif;
   --montserrat: "Montserrat", sans-serif;
+  --ysabeau: "Ysabeau", sans-serif;
 }
 @font-face {
   font-family: "Optima";
@@ -32,6 +33,12 @@
   font-family: "Montserrat";
   font-style: normal;
   src: local("Montserrat"), url("fonts/Montserrat.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ysabeau";
+  font-style: normal;
+  src: local("Ysabeau"), url("fonts/YsabeauOffice-VariableFont_wght.woff2") format("woff2"),
+  url("fonts/YsabeauOffice-VariableFont_wght.ttf") format("truetype");
 }
 
 /* Основные стили */
@@ -98,7 +105,7 @@ html ::selection {
     font-size: 2.778vw;
   }
 }
-
+/* БЭМ блоки */
 .btn {
   cursor: pointer;
   background: var(--red-600);
@@ -118,20 +125,74 @@ html ::selection {
   display: inline-block;
 }
 
+.basic-title-container{
+  display: flex;
+  flex-flow: column;
+  gap: 4rem;
+  align-items: center;
+}
+.basic-title{
+  font-size: 10rem;
+  line-height: 1.2;
+  color: var(--green-600);
+  text-align: center;
+}
+.basic-title-footer{
+  width: 60rem;
+  letter-spacing: 0.02em;
+  font-size: 2rem;
+  line-height: 1.4;
+  text-align: center;
+}
+@media only screen and (orientation: portrait) {
+  .basic-title{
+    font-size: 4rem;
+  }
+  .basic-title-container{
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .basic-title-footer{
+    font-size: 1.6rem;
+    width: unset;
+  }
+}
+
+/* БЭМ блоки конец */
+
 /* Хедер */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: fixed;
   top: 0;
   z-index: 10;
   width: 100vw;
+}
+.header__background {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(0.5rem);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 10.6rem;
+  z-index: 9;
+  /* transition: backdrop-filter 2s, background-color 1s; */
+}
+.header__container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 3rem 5rem;
+  position: relative;
 }
 .logo {
   width: 19rem;
   height: 4.6rem;
+}
+.header__logo{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .burger-icon {
   width: 5rem;
@@ -157,13 +218,14 @@ html ::selection {
 }
 .icon-btn__icon {
   position: absolute;
-  left: 2rem;
-  top: 0;
-  width: 3.4rem;
-  height: 4.6rem;
+  left: 0rem;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 4.4rem;
+  height: 6rem;
 }
 .icon-btn__bg {
-  height: 4.6rem;
+  height: 6rem;
   background-color: var(--red-600);
   border-radius: 4rem;
   top: 50%;
@@ -176,10 +238,10 @@ html ::selection {
 .icon-btn__text {
   position: relative;
   z-index: 2;
-  font-size: 1.6rem;
+  font-size: 2rem;
   line-height: 1;
   letter-spacing: 0.02em;
-  padding: 1.5rem 3rem;
+  padding: 2rem 3rem;
 
   transition: color 0.5s;
 }
@@ -261,17 +323,16 @@ html ::selection {
 .image-gallery {
   background-color: var(--green-100);
   position: relative;
-  padding-left: 10rem;
-  padding-right: 10rem;
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 .image-gallery__fixed-image{
   position: fixed;
-  width: 50rem;
+  width: 60rem;
   height: 100vh;
   z-index: 1;
-  top: 50%;
-  right: 10rem;
-  transform: translate(0, -50%);
+  top: 0;
+  right: 5rem;
   object-fit: cover;
   object-position: 50% 50%;
 }
@@ -286,55 +347,16 @@ html ::selection {
   min-height: 100vh;
   position: relative;
 }
-.fixed-wrapper {
-  /* width: 72vh; */
-  width: 50rem;
-  height: 100vh;
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  overflow: hidden;
-  /* background-color: #d4c9c9; */
-  z-index: 2;
-}
-.fixed-wrapper_inherit {
-  width: inherit;
-  height: inherit;
-}
-.fixed-container {
-  position: absolute;
-  /* top: -100dvh; */
-  height: inherit;
-  width: 100%;
-  /* background-color: aqua; */
-  z-index: 1;
-}
-.fixed-container_half-height {
-  height: 50%;
-}
-.fixed-container-two-tripartile-height {
-  height: 66.666666666%;
-}
-
-.fixed-asset {
-  position: absolute;
-  top: 0;
-  left: 0;
-  object-fit: cover;
-  object-position: 50% 50%;
-  width: 100%;
-  height: 100%;
-}
-
 .image-grid-first-elem {
-  width: 70rem;
-  height: 41rem;
+  width: 75rem;
+  height: 44rem;
   object-fit: cover;
   object-position: center center;
 }
 
 .sale-info-block {
   margin-top: 10rem;
+  margin-left: 5rem;
 }
 .sale-info-title {
   font-size: 2.4rem;
@@ -351,10 +373,10 @@ html ::selection {
 }
 .sale-info-value__icon {
   position: absolute;
-  left: -3.4rem;
-  top: 0.9rem;
-  width: 3.9rem;
-  height: 5.2rem;
+  left: -5rem;
+  top: -0.6rem;
+  width: 5rem;
+  height: 6.7rem;
 }
 
 .sale-info-text {
@@ -362,24 +384,18 @@ html ::selection {
   line-height: 1;
   line-height: 1.4;
   letter-spacing: 0.02em;
-
-  margin-top: 1rem;
 }
 
 .image-gallery__action {
-  margin-top: 6rem;
+  margin-top: 5rem;
+  margin-left: 5rem;
 }
 
 /* услуги */
 .services {
   z-index: 1;
   position: relative;
-}
-.services__title {
-  font-size: 10rem;
-  line-height: 1;
-  color: var(--green-600);
-  text-align: center;
+  padding-bottom: 5rem;
 }
 
 .services-slider {
@@ -400,13 +416,13 @@ html ::selection {
 }
 .service__title {
   position: absolute;
-  width: 18rem;
+  width: 19rem;
   left: 3rem;
-  bottom: 3.3rem;
+  bottom: 3rem;
 
   color: var(--white);
   letter-spacing: 0.02em;
-  font-size: 2.4rem;
+  font-size: 3.2rem;
   line-height: 1;
   z-index: 2;
 }
@@ -448,13 +464,16 @@ html ::selection {
 .price-list {
   display: flex;
   flex-flow: column;
-  gap: 5rem;
+  gap: 6rem;
   align-items: center;
   background-color: var(--green-100);
 
   width: 160rem;
   position: relative;
   z-index: 1;
+}
+.price-list-title-container{
+  gap: 3rem;
 }
 .price-list__container {
   width: 100%;
@@ -471,12 +490,7 @@ html ::selection {
   height: fit-content;
 }
 
-.price-list__title {
-  font-size: 10rem;
-  line-height: 1;
-  color: var(--green-600);
-}
-.price-list__text {
+.price-list-info-text {
   font-size: 1.6rem;
   line-height: 1;
   text-align: center;
@@ -488,7 +502,7 @@ html ::selection {
   border-bottom: solid;
   border-color: var(--green-600);
   border-width: 0.1rem;
-  padding: 1rem;
+  padding: 1rem 0;
   width: 85rem;
 }
 
@@ -498,6 +512,7 @@ html ::selection {
   line-height: 1;
   opacity: 0.5;
   cursor: pointer;
+  color: var(--green-900);
 }
 .tab.active{
   opacity: 1;
@@ -506,26 +521,32 @@ html ::selection {
 .tab__divider {
   font-size: 2.4rem;
   line-height: 1;
+  opacity: 0.5;
+  color: var(--green-900);
 }
 
 .price-list-item {
   position: relative;
 
-  height: 6.1rem;
+  height: 7.2rem;
   overflow: hidden;
   cursor: pointer;
 
   border-top: solid;
   border-color: var(--green-600);
   border-width: 0.1rem;
-  padding: 2rem 5rem;
-  font-size: 2rem;
+  padding: 2.4rem 5rem;
+  font-size: 2.4rem;
   line-height: 1;
+
+  color: var(--green-900);
 
   transition: height 0.2s, background-color 0.2s, color 0.2s;
   &:hover {
-    background-color: var(--green-600);
     color: var(--white);
+    .price-list-item__icon{
+      color: var(--white);
+    }
   }
   &.active {
     background-color: var(--green-600);
@@ -534,10 +555,28 @@ html ::selection {
     .price-list-item__body {
       opacity: 1;
     }
+    .price-list-item__icon{
+      color: var(--white);
+    }
   }
 }
+.price-list-item__title{
+  position: relative;
+  z-index: 1;
+  display: inline;
+}
+.price-list-item__bg{
+  position: absolute;
+  background-color: var(--green-600);
+  height: 7.2rem;
+  width: 100%;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
 .price-list-item__body {
-  margin-top: 5rem;
+  margin-top: 4rem;
+  margin-bottom: 1.6rem;
   font-weight: 300;
   font-size: 1.6rem;
   line-height: 1.5;
@@ -551,9 +590,12 @@ html ::selection {
 }
 .price-list-item__icon {
   position: absolute;
+  z-index: 1;
   right: 5.3rem;
-  width: 2rem;
-  height: 2rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--green-600);
+  transition: color 0.2s;
 }
 .price-list-table_mob {
   display: none;
@@ -568,12 +610,21 @@ html ::selection {
 }
 .price-list-cell {
   width: 24rem;
-  font-size: 2rem;
+  font-size: 2.4rem;
   line-height: 1;
   letter-spacing: 0.02em;
 }
 .price-list-cell_first-col {
   width: 69rem;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+.price-list-cell_first-col-footer{
+  width: 35rem;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 .price-list-cell_heading {
   font-size: 1.6rem;
@@ -587,11 +638,20 @@ html ::selection {
 }
 .price-list__more-info-link {
   display: block;
-  margin-top: 4rem;
-  text-decoration: underline;
+  margin-top: 6rem;
   font-size: 1.6rem;
   line-height: 1;
   letter-spacing: 0.02em;
+  text-align: center;
+}
+.price-list-massage-container{
+  padding: 6rem 5rem;
+  background: var(--green-600);
+  color: var(--white);
+}
+.price-list-massage-container ::selection{
+  color: var(--green-600);
+  background: var(--white);
 }
 /* прайс лист */
 
@@ -616,7 +676,8 @@ html ::selection {
   color: var(--green-600);
 
   width: 120rem;
-  font-size: 5rem;
+  font-family: var(--ysabeau);
+  font-size: 6rem;
   line-height: 1;
 }
 /* текст по центру */
@@ -635,9 +696,6 @@ html ::selection {
   padding-top: 30rem;
   padding-bottom: 50rem;
   background-color: var(--green-100);
-  display: flex;
-  align-items: center;
-  flex-flow: column;
   position: relative;
   z-index: 1;
 }
@@ -716,9 +774,10 @@ html ::selection {
   height: fit-content;
 }
 .master-name {
-  font-size: 4rem;
+  font-size: 6rem;
   line-height: 1;
-  margin-bottom: 5rem;
+  margin-bottom: 3rem;
+  color: var(--green-600);
 }
 .master-text-wrapper {
   display: flex;
@@ -733,17 +792,17 @@ html ::selection {
 .master-desc-title {
   font-size: 1.6rem;
   line-height: 1;
+  letter-spacing: 0.02em;
   opacity: 0.5;
 }
 .master-desc-text {
-  font-size: 1.6rem;
+  font-size: 2rem;
   line-height: 1;
   line-height: 1.4;
+  letter-spacing: 0.02em;
 }
 .master-action-block {
   margin-top: 5rem;
-  display: flex;
-  justify-content: center;
 }
 .master-fixed-background {
   position: fixed;
@@ -766,50 +825,44 @@ html ::selection {
   position: relative;
   z-index: 1;
 }
-.our-advantages__title {
-  font-size: 10rem;
-  line-height: 1.2;
-  color: var(--green-600);
-  text-align: center;
-}
 /* Преимущества конец */
 
 /* адреса */
 .addresses-list {
   display: flex;
+  flex-flow: column;
   gap: 5rem;
   position: relative;
   z-index: 1;
-  padding-bottom: 25rem;
+  padding-bottom: 10rem;
 }
 .address-item {
-  width: 70rem;
-}
-.addresses-list__wrapper {
+  width: 75rem;
   display: flex;
   flex-flow: column;
-  gap: 6rem;
+}
+.addresses-list__wrapper {
+  margin-top: 15rem;
+  display: flex;
 }
 .addresses-list__title {
   font-size: 4rem;
   line-height: 1;
 }
-.address-item{
-  display: flex;
-  flex-flow: column;
-}
 .address-title{
   font-size: 2.4rem;
   line-height: 1;
-  padding: 1rem 0;
+  letter-spacing: 0.02em;
+  padding: 2.4rem 0;
   border-top: var(--green-600) .1rem solid;
   border-bottom: var(--green-600) .1rem solid;
+  color: var(--green-600);
 }
 .address-info-container{
   margin-top: 2rem;
   display: flex;
   flex-flow: column;
-  gap: 4rem;
+  gap: 3rem;
 }
 .address-info-list{
   display: flex;
@@ -820,6 +873,9 @@ html ::selection {
   font-size: 2rem;
   line-height: 1;
   letter-spacing: 0.02em;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
 }
 .address-maps-info{
   display: flex;
@@ -862,11 +918,8 @@ html ::selection {
 .maps-link__text{
   font-size: 1.2rem;
   line-height: 1;
-  width: 10rem;
-  letter-spacing: 0.02em;
-}
-.maps-link__text_long{
   width: unset;
+  letter-spacing: 0.02em;
 }
 .address-btn{
   width: fit-content;
@@ -882,17 +935,13 @@ html ::selection {
   margin-bottom: 1rem;
 }
 .map-wrapper {
-  width: 75rem;
-  height: 50rem;
-  position: relative;
+  width: 100%;
+  height: 66rem;
 }
 .map {
-  width: 75rem;
-  height: 50rem;
+  width: inherit;
+  height: inherit;
   background-color: var(--green-600);
-}
-.mobile-map{
-  display: none;
 }
 /* адреса конец */
 
@@ -977,9 +1026,19 @@ html ::selection {
 }
 .footer__dev-info {
   flex-grow: 1;
-  text-align: end;
+  display: flex;
+  gap: .5rem;
+  justify-content: end;
 }
-
+.footer__dev-info-icon{
+  width: 2.5rem;
+  height: 1.2rem;
+}
+.footer__dev-info-link{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
 .icons-row {
   display: flex;
   gap: 1rem;
@@ -1024,6 +1083,17 @@ html ::selection {
   .header__burger {
     display: none;
   }
+  .header__background{
+    height: 11rem;
+  }
+  .header__container{
+    padding: 4rem 0;
+    height: 11rem;
+  }
+  .logo{
+    width: 12.4rem;
+    height: 3rem;
+  }
   .burger-btn{
     display: block;
     width: 7.4rem;
@@ -1052,6 +1122,11 @@ html ::selection {
   .image-foreground {
     display: none;
   }
+
+
+  .containers-separator{
+    height: 10rem;
+  }
   .image-gallery{
     background-color: var(--green-100);
     padding-left: 1rem;
@@ -1066,6 +1141,7 @@ html ::selection {
   .image-gallery__action {
     display: flex;
     justify-content: center;
+    margin-left: 0;
   }
   .image-grid-first-elem {
     width: 34rem;
@@ -1073,9 +1149,13 @@ html ::selection {
   }
   .sale-info-block {
     margin-top: 5rem;
+    margin-left: 0;
   }
   .sale-info-value {
-    margin-left: 3.4rem;
+    margin-left: 5rem;
+  }
+  .sale-info-text{
+    margin-left: 5rem;
   }
 
   .main-text__title {
@@ -1110,7 +1190,7 @@ html ::selection {
     width: unset;
     font-size: 1.8rem;
     line-height: 1;
-    gap: 3rem;
+    gap: 5rem;
   }
   .price-list__title {
     font-size: 4rem;
@@ -1119,6 +1199,10 @@ html ::selection {
   .price-list__text {
     font-size: 1.2rem;
     line-height: 1;
+  }
+  .price-list-info-text{
+    font-size: 1.2rem;
+    line-height: 1.2;
   }
   .tabs-container {
     width: 100%;
@@ -1133,20 +1217,14 @@ html ::selection {
     line-height: 1;
   }
   .price-list-item {
-    padding: 2rem 1rem;
-    &:hover {
-      background-color: var(--green-100);
-      color: var(--green-900);
-    }
+    padding: 2.4rem 1rem;
     &.active {
       background-color: var(--green-600);
       color: var(--white);
     }
   }
   .price-list-item__icon {
-    width: 1.8rem;
-    height: 1.8rem;
-    right: 2rem;
+    right: 1rem;
   }
   .price-list-content {
     width: 36rem;
@@ -1158,9 +1236,6 @@ html ::selection {
   .price-list-table {
     display: none;
   }
-  .price-list-item__body {
-    margin-top: 3rem;
-  }
   .price-list-table_mob {
     display: flex;
     flex-flow: column;
@@ -1170,9 +1245,9 @@ html ::selection {
     justify-content: space-between;
   }
   .price-list-cell {
-    font-size: 1.4rem;
+    font-size: 2rem;
     line-height: 1;
-    width: 10rem;
+    width: 11rem;
   }
   .price-list-cell_first-col {
     font-size: 1rem;
@@ -1194,6 +1269,7 @@ html ::selection {
     text-align: center;
     font-size: 1.2rem;
     line-height: 1;
+    margin-top: 5rem;
   }
   /* прайс лист */
 
@@ -1238,6 +1314,16 @@ html ::selection {
   .master-fixed-background{
     display: block;
   }
+  .master-desc-title {
+    font-size: 1rem;
+  }
+  .master-desc-text{
+    font-size: 1.6rem;
+  }
+  .master-action-block{
+    display: flex;
+    justify-content: center;
+  }
   /* Преимущества */
   .our-advantages__title {
     font-size: 4rem;
@@ -1250,26 +1336,30 @@ html ::selection {
     line-height: 1;
   }
   .services-slider {
-    margin-top: 5rem;
+    margin-top: 10rem;
   }
   /* услуги конец*/
 
   /* адреса */
+  .addresses-list__wrapper{
+    flex-flow: column;
+    margin-top: 10rem;
+    gap: 5rem;
+  }
+  .address-title{
+    color: var(--green-900);
+    padding: 1.6rem 0;
+  }
   .addresses-list{
     flex-flow: column;
   }
   .address-item {
     width: unset;
   }
+  .address-rating{
+    flex-flow: column;
+  }
   .map-wrapper{
-    display: none;
-  }
-  .mobile-map{
-    display: block;
-    width: 36rem;
-    height: 24rem;
-  }
-  .map{  
     width: 36rem;
     height: 24rem;
   }
@@ -1314,20 +1404,66 @@ html ::selection {
   }
   .footer__dev-info {
     flex-grow: 0;
-    text-align: unset;
+    margin-top: 2rem;
   }
   .footer__company-info-text {
     width: unset;
   }
+  .footer__dev-info-link{
+    flex-flow: column-reverse;
+  }
   .footer-bottom-info {
+    justify-content: center;
     text-align: center;
   }
   /* футер конец */
 }
+
+/* БЭМ-блоки */
+
+.fixed-wrapper {
+  /* width: 72vh; */
+  width: 50rem;
+  height: 100vh;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  overflow: hidden;
+  /* background-color: #d4c9c9; */
+  z-index: 2;
+}
+.fixed-wrapper_inherit {
+  width: inherit;
+  height: inherit;
+}
+.fixed-container {
+  position: absolute;
+  /* top: -100dvh; */
+  height: inherit;
+  width: 100%;
+  /* background-color: aqua; */
+  z-index: 1;
+}
+.fixed-container_half-height {
+  height: 50%;
+}
+.fixed-container-two-tripartile-height {
+  height: 66.666666666%;
+}
+
+.fixed-asset {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  object-position: 50% 50%;
+  width: 100%;
+  height: 100%;
+}
 /* элемент который берется за эталон высоты мобильного устройства без Ui элементов */
 .mobileHeightRef {
   height: 100vh !important;
-
+  
   z-index: -99999999;
   position: absolute;
 }
@@ -1390,3 +1526,4 @@ html ::selection {
     padding-top: 20rem;
   }
 }
+/* БЭМ-блоки конец */

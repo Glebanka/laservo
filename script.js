@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 
     // functions calling:
-    gsap.registerPlugin(ScrollTrigger)
-    ScrollTrigger.normalizeScroll(true);
+    scrollPluginsInit()
     startAnimation()
     imageGalleryAnimation()
     priceListInit()
@@ -48,7 +47,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     if (isDesktop) {
         iconBtnAnimation()
     }
-    servicesSliderInit()
+    serviceSectionInit()
     ourAdvantagesAnimation()
     yandexMapsInit()
     currentYearInit()
@@ -60,6 +59,30 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 
 // functions initializing:
+
+function scrollPluginsInit() {
+    gsap.registerPlugin(ScrollTrigger);
+    if (isDesktop){
+        ScrollTrigger.refresh();
+        // smooth scroll init
+        const lenis = new Lenis()
+
+        lenis.on('scroll', ScrollTrigger.update)
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000)
+        })
+
+        gsap.ticker.lagSmoothing(0)
+
+        ScrollTrigger.refresh();
+
+        const yandexMap = document.querySelector('#map');
+        yandexMap.addEventListener('wheel', (e) => {
+            e.stopPropagation(); // Блокируем события прокрутки для Lenis внутри карты
+        });
+    }
+}
 function startAnimation() {
     if (isMobile) {
         gsap.timeline({
@@ -129,7 +152,7 @@ function imageGalleryAnimation() {
     }
 }
 
-function priceListInit(){
+function priceListInit() {
     function tabsInit() {
         document.querySelectorAll('.tab').forEach(tab => {
             const tabsContainer = tab.parentElement;
@@ -149,7 +172,7 @@ function priceListInit(){
                     })
                     let content = document.querySelector('.price-list-content-' + tab.dataset.contentId)
                     content.classList.add('active')
-    
+
                     let activeAccordeon = findActiveAccordeon()
                     if (activeAccordeon) {
                         closeAccordeon(activeAccordeon)
@@ -162,7 +185,7 @@ function priceListInit(){
                     } else {
                         gsap.timeline().to('.price-list-content-wrapper', { x: "-100%", ease: "back.in(1.5)", duration: 1 })
                     }
-    
+
                 }
             }
         });
@@ -172,10 +195,11 @@ function priceListInit(){
         if (accordeons) {
             accordeons.forEach(accordeon => {
                 let accordeonBody = accordeon.querySelector('.price-list-item__body')
-    
+                // время в мс после которого обновятся все анимации (зависит от времени открытия аккордеона)
+                let resetBufferTime = 201
                 // убираем возможность кликать внутри
                 accordeonBody.onclick = (e) => e.stopPropagation();
-    
+
                 accordeon.onclick = () => {
                     if (accordeon.classList.contains('active')) {
                         closeAccordeon(accordeon)
@@ -183,23 +207,28 @@ function priceListInit(){
                     } else {
                         // проходимся второй раз по элементам и ищем уже активный
                         let activeAccordeon = findActiveAccordeon()
-    
+
                         if (activeAccordeon) {
                             closeAccordeon(activeAccordeon)
-                            openAccordeon(accordeon)
+                            let delay = 170
+                            setTimeout(() => openAccordeon(accordeon), delay)
+                            resetBufferTime += delay
                         } else {
                             openAccordeon(accordeon)
                             setPriceListHeight('accordeon', accordeon, 'addHeight')
                         }
                     }
-                    setTimeout(refreshAllAnimations, 201);
+                    setTimeout(refreshAllAnimations, resetBufferTime);
                 }
             })
         }
     }
     function accordeonSetActualSize(accordeon) {
         let accordeonBody = accordeon.querySelector('.price-list-item__body')
-        accordeon.style.height = accordeonBody.getBoundingClientRect().height + parseFloat(getComputedStyle(accordeonBody).marginTop) + remToPx(6.1) + 'px'
+        accordeon.style.height = accordeonBody.getBoundingClientRect().height +
+            parseFloat(getComputedStyle(accordeonBody).marginTop) +
+            parseFloat(getComputedStyle(accordeonBody).marginBottom) +
+            remToPx(7.2) + 'px'
     }
     function findActiveAccordeon() {
         let activeAccordeon
@@ -212,7 +241,7 @@ function priceListInit(){
     }
     function closeAccordeon(accordeon) {
         accordeon.classList.remove('active');
-        accordeon.style.height = remToPx(6.1) + "px"
+        accordeon.style.height = remToPx(7.2) + "px"
         // анимируем иконку
         gsap.timeline().to(accordeon.querySelector('.price-list-item__icon'), { rotate: 0, transformOrigin: "center" }, 0)
     }
@@ -229,31 +258,84 @@ function priceListInit(){
             priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
         } else if (source == 'accordeon') {
             // Если мобилка, то ставим первое значение, иначе второе
-            let priceListItemBodyMargin = (isMobile) ? remToPx(3) : remToPx(5)
+            let priceListItemBodyMargin = (isMobile) ? remToPx(5.6) : remToPx(5.6)
             let priceListItemBodyHeight = getHeight(target.querySelector('.price-list-item__body')) + priceListItemBodyMargin
-    
+
             if (action == 'addHeight') {
                 priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) + priceListItemBodyHeight) + "px"
             } else if (action == 'delHeight') {
                 priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) - priceListItemBodyHeight) + "px"
             }
-    
+
             setTimeout(
                 () => { priceListContentWrapper.style.height = getHeight(document.querySelector('.price-list-content.active')) + 'px' }
                 , 201)
         }
-    
+
         setTimeout(() => {
             refreshAllAnimations()
         }, 1001);
-    
+
         function getHeight(element) {
             return element.getBoundingClientRect().height;
         }
     }
-    
+
+    function priceListHoverAnimaton() {
+        document.querySelectorAll('.price-list-item').forEach(item => {
+            let itemHeight = item.getBoundingClientRect().height
+            let itemBG = item.querySelector('.price-list-item__bg')
+
+            let center = itemHeight / 2
+            let tl = gsap.timeline()
+            item.addEventListener('pointerenter', (e) => {
+                tl.killTweensOf(itemBG)
+                if (!item.classList.contains('active')) {
+                    if (e.target !== e.currentTarget) return; // Игнорируем внутренние элементы
+                    itemYPos = item.getBoundingClientRect().y
+                    itemBG.style.opacity = '1'
+
+                    if (e.clientY > itemYPos + center) {
+                        // снизу
+                        tl = gsap.timeline().fromTo(itemBG, { y: '101%' }, { y: 0, duration: 0.3 })
+                            .to(itemBG, { opacity: 1, duration: 0.01 }, 0)
+                    } else {
+                        // сверху
+                        tl = gsap.timeline().fromTo(itemBG, { y: '-101%' }, { y: 0, duration: 0.3 })
+                            .to(itemBG, { opacity: 1, duration: 0.01 }, 0)
+                    }
+                } else {
+                    itemBG.style.opacity = '0'
+                }
+
+            })
+            item.addEventListener('pointerleave', (e) => {
+                tl.kill()
+                if (!item.classList.contains('active')) {
+                    if (e.target !== e.currentTarget) return; // Игнорируем внутренние элементы
+                    itemYPos = item.getBoundingClientRect().y
+
+                    if (e.clientY > itemYPos + center) {
+                        // снизу
+                        tl = gsap.timeline().fromTo(itemBG, { y: 0 }, { y: '101%', duration: 0.3 })
+                            .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3)
+                    } else {
+                        // сверху
+                        tl = gsap.timeline().fromTo(itemBG, { y: 0 }, { y: "-101%", duration: 0.3 })
+                            .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3)
+                    }
+                } else {
+                    itemBG.style.opacity = '0'
+                }
+            })
+        })
+    }
+
     accordeonsInit()
     tabsInit()
+    if(isDesktop){
+        priceListHoverAnimaton()
+    }
 }
 
 function fixedTextAnimation() {
@@ -378,7 +460,7 @@ function fixedImageAnimation() {
     if (isMobile) {
         const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
         preloadImages(imagesToPreload);
-        
+
         let backgroundElem = document.querySelector('.fixed-background')
         setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
 
@@ -391,7 +473,7 @@ function fixedImageAnimation() {
         // setElementFixed('.fixed-wrapper-1', 2)
         setElementFixed('.fixed-wrapper-2', 3)
         setElementFixed('.fixed-wrapper-3', 3)
-        setElementFixed('.fixed-wrapper-4', 3)
+        setElementFixed('.fixed-wrapper-4', 1.5)
     }
 
 }
@@ -404,7 +486,7 @@ function setElementFixed(selector, selfRelativeScrolls) {
 
     let endYPosition
     if (selfRelativeScrolls > 1) {
-        endYPosition = (selfRelativeScrolls - 1) * 100+"%"
+        endYPosition = (selfRelativeScrolls - 1) * 100 + "%"
     } else {
         endYPosition = '0'
     }
@@ -422,11 +504,45 @@ function setElementFixed(selector, selfRelativeScrolls) {
         }
     }).fromTo(container, { y: '-100%' }, { y: endYPosition, ease: 'none', }, 0)
 }
-function servicesSliderInit() {
-    const swiper = new Swiper('.services-slider', {
-        slidesPerView: 'auto',
-        speed: 700,
-    })
+function serviceSectionInit() {
+    function servicesSliderInit() {
+        const swiper = new Swiper('.services-slider', {
+            slidesPerView: 'auto',
+            speed: 700,
+        })
+    }
+    function servicesAnimationInit() {
+        let tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-slider.first',
+                start: 'top 50%',
+                // markers: true,
+            }
+        })
+        document.querySelector('.services-slider.first').querySelectorAll('.service').forEach((elem, index) => {
+            if (index > 0) {
+                tl.fromTo(elem, { x: -50 * index }, { x: 0 }, 0.025 * index)
+            }
+        })
+        let tl2 = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.services-slider.second',
+                start: 'top 50%',
+                // markers: true,
+            }
+        })
+        const elements = document.querySelector('.services-slider.second').querySelectorAll('.service');
+        elements.forEach((elem, index) => {
+            const reverseIndex = elements.length - 1 - index;
+            if (reverseIndex > 1) {
+                tl2.fromTo(elem, { y: 30 * reverseIndex }, { y: 0 }, 0.0125 * reverseIndex)
+            }
+        })
+    }
+    servicesSliderInit()
+    if(isDesktop){
+        servicesAnimationInit()
+    }
 }
 
 function iconBtnAnimation() {
@@ -438,8 +554,9 @@ function iconBtnAnimation() {
         let tl = gsap.timeline()
         btn.addEventListener('mouseenter', throttle(() => {
             tl.killTweensOf(background)
+
             tl = gsap.timeline().to(icon, {
-                x: (btn.clientWidth - remToPx(5)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
+                x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
             }, 0)
                 .to(icon, { opacity: 0, duration: 0.05 }, 1)
                 .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
@@ -458,37 +575,14 @@ function iconBtnAnimation() {
 }
 
 function yandexMapsInit() {
-    let mapContainer  = document.querySelector('.map-wrapper')
-    let addressesContainer = document.querySelector('.addresses-list__wrapper')
-
-    // Вычисляем коэффициенты для относительной высоты
-    let heightRatio  = addressesContainer.getBoundingClientRect().height / mapContainer.getBoundingClientRect().height
-    let inverseHeightRatio  = mapContainer.getBoundingClientRect().height / addressesContainer.getBoundingClientRect().height
-
-    let fixedContentContainer  = mapContainer.querySelector('.fixed-container')
-
-    // Устанавливаем высоту для mapContainer, равную высоте addressesContainer
-    mapContainer.style.height = addressesContainer.getBoundingClientRect().height + 'px'
-    // Устанавливаем относительную высоту для fixedContentContainer на основе обратного коэффициента
-    fixedContentContainer.style.height = inverseHeightRatio * 100 + '%'
-    
-    let mapSelector
-    let zoomInitValue
-    if (isMobile) {
-        mapSelector = 'mobileMap'
-        zoomInitValue = 12
-    } else {
-        setElementFixed('.fixed-wrapper-5', heightRatio)
-        mapSelector = 'map'
-        zoomInitValue = 13
-    }
+    let zoomInitValue = isMobile ? 12 : 14
     ymaps.ready(init);
     function init() {
-        let myMap = new ymaps.Map(mapSelector, {
+        let myMap = new ymaps.Map('map', {
             center: [54.989431, 73.337176],
             zoom: zoomInitValue,
             controls: ['geolocationControl', 'fullscreenControl', 'zoomControl'],
-        },{
+        }, {
             suppressMapOpenBlock: true
         });
 
@@ -511,7 +605,7 @@ function yandexMapsInit() {
                     <div class="maps-link__text maps-link__text_long">Посмотреть на яндекс картах</div>
                 </a>
                 `,
-                ].join('')
+            ].join('')
         }, {
             iconLayout: 'default#image',
             iconImageHref: 'assets/mapPlacemark.svg',
@@ -534,7 +628,7 @@ function yandexMapsInit() {
                     <div class="maps-link__text maps-link__text_long">Посмотреть на яндекс картах</div>
                 </a>
                 `,
-                ].join('')
+            ].join('')
         }, {
             iconLayout: 'default#image',
             iconImageHref: 'assets/mapPlacemark.svg',
@@ -553,10 +647,8 @@ function footerAnimation() {
     let footer = document.querySelector('.footer');
     let container = document.querySelector('.footer-container');
     footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
-    let startPosition ='top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
-    // isMobile ? 'top top' : 
-    let containerStartYPosition =  '-100%'
-    // isMobile ? 0 :
+    let startPosition = isMobile ? 'top top' : 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
+    let containerStartYPosition = isMobile ? 0 :'-100%'
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
@@ -565,7 +657,9 @@ function footerAnimation() {
             scrub: true,
         }
     }).fromTo(container, { y: containerStartYPosition }, { y: '0', ease: 'none' }, 0)
-    // .fromTo('.header', {opacity: 1}, {opacity: 0, ease: 'none'}, 0)
+    // if (isMobile) {
+    //     tl.fromTo('.header', { opacity: 1 }, { opacity: 0, ease: 'none' }, 0)
+    // }
 }
 function throttle(func, delay) {
     let lastCall = 0;
