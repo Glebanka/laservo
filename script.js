@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 function scrollPluginsInit() {
     gsap.registerPlugin(ScrollTrigger);
-    if (isDesktop){
+    if (isDesktop) {
         ScrollTrigger.refresh();
         // smooth scroll init
         const lenis = new Lenis()
@@ -333,7 +333,7 @@ function priceListInit() {
 
     accordeonsInit()
     tabsInit()
-    if(isDesktop){
+    if (isDesktop) {
         priceListHoverAnimaton()
     }
 }
@@ -515,7 +515,9 @@ function serviceSectionInit() {
         let tl = gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-slider.first',
-                start: 'top 50%',
+                start: 'top 90%',
+                end: 'bottom bottom',
+                scrub: true,
                 // markers: true,
             }
         })
@@ -527,7 +529,9 @@ function serviceSectionInit() {
         let tl2 = gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-slider.second',
-                start: 'top 50%',
+                start: 'top 90%',
+                end: 'bottom bottom',
+                scrub: true,
                 // markers: true,
             }
         })
@@ -540,7 +544,7 @@ function serviceSectionInit() {
         })
     }
     servicesSliderInit()
-    if(isDesktop){
+    if (isDesktop) {
         servicesAnimationInit()
     }
 }
@@ -585,6 +589,7 @@ function yandexMapsInit() {
         }, {
             suppressMapOpenBlock: true
         });
+        myMap.behaviors.disable('scrollZoom');
 
 
         let myPlacemark = new ymaps.Placemark([54.985581, 73.311039], {
@@ -648,7 +653,7 @@ function footerAnimation() {
     let container = document.querySelector('.footer-container');
     footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
     let startPosition = isMobile ? 'top top' : 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
-    let containerStartYPosition = isMobile ? 0 :'-100%'
+    let containerStartYPosition = isMobile ? 0 : '-100%'
     gsap.timeline({
         scrollTrigger: {
             trigger: container,
