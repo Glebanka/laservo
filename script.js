@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     currentYearInit()
     footerAnimation()
     fixedImageAnimation()
+    udsAnimation()
     // ourMastersAnimation()
     // secretAnimation()
 });
@@ -76,79 +77,75 @@ function scrollPluginsInit() {
         gsap.ticker.lagSmoothing(0)
 
         ScrollTrigger.refresh();
-
-        const yandexMap = document.querySelector('#map');
-        yandexMap.addEventListener('wheel', (e) => {
-            e.stopPropagation(); // Блокируем события прокрутки для Lenis внутри карты
-        });
     }
 }
 function startAnimation() {
-    if (isMobile) {
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.fixed-video',
-                start: 'top top',
-                end: '+=' + winHeight,
-                pin: true,
-                // markers: true
-                scrub: 1,
-            }
-        }).to('.mob-image-foreground', { scale: 10, transformOrigin: 'center 50rem', duration: 1 }, 0)
-            .to('.mob-image-foreground', { duration: 0.1, display: 'none' }, 1);
-
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.main-text-container',
-                start: 'top top',
-                end: '+=' + winHeight,
-                pin: true,
-            }
-        })
-    } else {
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.fixed-video',
-                start: 'top top',
-                end: '+=' + winHeight / 2,
-                pin: true,
-                // markers: true
-                scrub: 1,
-            }
-        }).to('.image-foreground', { scale: 10, transformOrigin: 'center center', duration: 1 }, 0)
-            .to('.image-foreground', { duration: 0.1, display: 'none' }, 1);
-
-
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.main-text-container',
-                start: 'top top',
-                end: '+=' + winHeight / 2,
-                pin: true,
-            }
-        })
+    if(document.querySelector('.main-banner')){
+        if (isMobile) {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.fixed-video',
+                    start: 'top top',
+                    end: '+=' + winHeight,
+                    pin: true,
+                    // markers: true
+                    scrub: 1,
+                }
+            }).to('.mob-image-foreground', { scale: 10, transformOrigin: 'center 50rem', duration: 1 }, 0)
+                .to('.mob-image-foreground', { duration: 0.1, display: 'none' }, 1);
+    
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.main-text-container',
+                    start: 'top top',
+                    end: '+=' + winHeight,
+                    pin: true,
+                }
+            })
+        } else {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.fixed-video',
+                    start: 'top top',
+                    end: '+=' + winHeight / 2,
+                    pin: true,
+                    // markers: true
+                    scrub: 1,
+                }
+            }).to('.image-foreground', { scale: 10, transformOrigin: 'center center', duration: 1 }, 0)
+                .to('.image-foreground', { duration: 0.1, display: 'none' }, 1);
+    
+    
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.main-text-container',
+                    start: 'top top',
+                    end: '+=' + winHeight / 2,
+                    pin: true,
+                }
+            })
+        }
     }
-
-
 }
 function imageGalleryAnimation() {
-
-    if (isDesktop) {
-        let image = document.querySelector('.image-gallery__fixed-image')
-        let container = document.querySelector('.image-gallery')
-        image.style.display = 'none'
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: '.image-grid__padding-top',
-                start: 'bottom bottom',
-                end: '+=' + container.getBoundingClientRect().height * 2,
-                // markers: true,
-                onLeave: () => { image.style.display = 'none' },
-                onEnter: () => { image.style.display = 'block' },
-                onLeaveBack: () => { image.style.display = 'none' },
-                onEnterBack: () => { image.style.display = 'block' },
-            }
-        })
+    if(document.querySelector('.image-gallery')){
+        if (isDesktop) {
+            let image = document.querySelector('.image-gallery__fixed-image')
+            let container = document.querySelector('.image-gallery')
+            image.style.display = 'none'
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.image-grid__padding-top',
+                    start: 'bottom bottom',
+                    end: '+=' + container.getBoundingClientRect().height * 2,
+                    // markers: true,
+                    onLeave: () => { image.style.display = 'none' },
+                    onEnter: () => { image.style.display = 'block' },
+                    onLeaveBack: () => { image.style.display = 'none' },
+                    onEnterBack: () => { image.style.display = 'block' },
+                }
+            })
+        }
     }
 }
 
@@ -200,22 +197,28 @@ function priceListInit() {
                 // убираем возможность кликать внутри
                 accordeonBody.onclick = (e) => e.stopPropagation();
 
+                let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
+
                 accordeon.onclick = () => {
                     if (accordeon.classList.contains('active')) {
                         closeAccordeon(accordeon)
-                        setPriceListHeight('accordeon', accordeon, 'delHeight')
+                        if(priceListContentWrapper){
+                            setPriceListHeight('accordeon', accordeon, 'delHeight')
+                        }
                     } else {
                         // проходимся второй раз по элементам и ищем уже активный
                         let activeAccordeon = findActiveAccordeon()
 
                         if (activeAccordeon) {
-                            closeAccordeon(activeAccordeon)
-                            let delay = 170
-                            setTimeout(() => openAccordeon(accordeon), delay)
+                            openAccordeon(accordeon)
+                            let delay = 50
+                            setTimeout(() => closeAccordeon(activeAccordeon), delay)
                             resetBufferTime += delay
                         } else {
                             openAccordeon(accordeon)
-                            setPriceListHeight('accordeon', accordeon, 'addHeight')
+                            if(priceListContentWrapper) {
+                                setPriceListHeight('accordeon', accordeon, 'addHeight')
+                            }
                         }
                     }
                     setTimeout(refreshAllAnimations, resetBufferTime);
@@ -280,7 +283,6 @@ function priceListInit() {
             return element.getBoundingClientRect().height;
         }
     }
-
     function priceListHoverAnimaton() {
         document.querySelectorAll('.price-list-item').forEach(item => {
             let itemHeight = item.getBoundingClientRect().height
@@ -331,20 +333,41 @@ function priceListInit() {
         })
     }
 
+
     accordeonsInit()
     tabsInit()
     if (isDesktop) {
         priceListHoverAnimaton()
     }
 }
-
+function udsAnimation(){
+    if(document.querySelector('.UDS-mockup')){
+        if(isDesktop){
+            gsap.timeline({
+                scrollTrigger:{
+                    trigger: '.UDS-mockup',
+                    start: 'top '+ (((winHeight - remToPx(62)) / 2) / winHeight * 100) + '%',
+                    end: '+='+remToPx(40),
+                    pin: true,
+                }
+            })
+        }
+    }
+}
 function fixedTextAnimation() {
     let containers = ['.centered-text-container-1', '.centered-text-container-2']
+    // если хотя бы один из контейнеров существует, то переменной задается значениe true
+    let containersExist = containers.every(container => document.querySelector(container) !== null);
+    if (!containersExist) return
+
     let elementGroups = [['.centered-text-1', '.centered-text-2']]
     setFixedText(containers, elementGroups)
 }
 function ourAdvantagesAnimation() {
     let containers = ['.centered-text-container-3', '.centered-text-container-4', '.centered-text-container-5']
+    let containersExist = containers.every(container => document.querySelector(container) !== null);
+    if (!containersExist) return
+
     let elementGroups = [['.centered-text-3', '.centered-text-4'], ['.centered-text-4', '.centered-text-5']]
     setFixedText(containers, elementGroups)
 }
@@ -352,8 +375,6 @@ function setFixedText(containers, elementGroups) {
     let screensCount = containers.length;
     let parentElement = document.querySelector(containers[1]).parentElement
     parentElement.style.height = ((screensCount + 1) * 100) + 'vh'
-
-    let secondCenteredTextShift = (isMobile) ? '-50%' : '0';
 
     let firstElem
 
@@ -462,18 +483,23 @@ function fixedImageAnimation() {
         preloadImages(imagesToPreload);
 
         let backgroundElem = document.querySelector('.fixed-background')
-        setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
+        if(backgroundElem){
+            setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
+        }
 
         let mastersBackgroundElem = document.querySelector('.master-fixed-background')
-        setTriggerOnElement('.one-screen-transparent-2', "second-image.png", mastersBackgroundElem)
-        setTriggerOnElement('.one-screen-transparent-3', "third-image.png", mastersBackgroundElem)
-        setTriggerOnElement('.one-screen-transparent-4', "second-image.png", mastersBackgroundElem)
+        if(mastersBackgroundElem){
+            setTriggerOnElement('.one-screen-transparent-2', "second-image.png", mastersBackgroundElem)
+            setTriggerOnElement('.one-screen-transparent-3', "third-image.png", mastersBackgroundElem)
+            setTriggerOnElement('.one-screen-transparent-4', "second-image.png", mastersBackgroundElem)
+        }
 
     } else {
-        // setElementFixed('.fixed-wrapper-1', 2)
-        setElementFixed('.fixed-wrapper-2', 3)
-        setElementFixed('.fixed-wrapper-3', 3)
-        setElementFixed('.fixed-wrapper-4', 1.5)
+        let fixedWrappersPairs = [['.fixed-wrapper-2', 3],['.fixed-wrapper-3', 3],['.fixed-wrapper-4', 1.8]]
+        fixedWrappersPairs.forEach(fixedWrapperPair=>{            
+            if(!document.querySelector(fixedWrapperPair[0])) return
+            setElementFixed(fixedWrapperPair[0], fixedWrapperPair[1])
+        })
     }
 
 }
@@ -511,31 +537,17 @@ function serviceSectionInit() {
             speed: 700,
         })
     }
-    function servicesAnimationInit() {
-        let tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.services-slider.first',
-                start: 'top 90%',
-                end: 'bottom bottom',
-                scrub: true,
-                // markers: true,
-            }
-        })
-        document.querySelector('.services-slider.first').querySelectorAll('.service').forEach((elem, index) => {
-            if (index > 0) {
-                tl.fromTo(elem, { x: -50 * index }, { x: 0 }, 0.025 * index)
-            }
-        })
+    function servicesAnimationInit(){
         let tl2 = gsap.timeline({
             scrollTrigger: {
-                trigger: '.services-slider.second',
+                trigger: '.services-slider',
                 start: 'top 90%',
                 end: 'bottom bottom',
                 scrub: true,
                 // markers: true,
             }
         })
-        const elements = document.querySelector('.services-slider.second').querySelectorAll('.service');
+        const elements = document.querySelector('.services-slider').querySelectorAll('.service');
         elements.forEach((elem, index) => {
             const reverseIndex = elements.length - 1 - index;
             if (reverseIndex > 1) {
@@ -666,6 +678,8 @@ function footerAnimation() {
     //     tl.fromTo('.header', { opacity: 1 }, { opacity: 0, ease: 'none' }, 0)
     // }
 }
+
+// функция которая не позволяет выполнять повтроно вызываемую функцию раньше чем пройдет delay
 function throttle(func, delay) {
     let lastCall = 0;
 
