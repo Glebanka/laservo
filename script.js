@@ -80,7 +80,7 @@ function scrollPluginsInit() {
     }
 }
 function startAnimation() {
-    if(document.querySelector('.main-banner')){
+    if (document.querySelector('.main-banner')) {
         if (isMobile) {
             gsap.timeline({
                 scrollTrigger: {
@@ -93,7 +93,7 @@ function startAnimation() {
                 }
             }).to('.mob-image-foreground', { scale: 10, transformOrigin: 'center 50rem', duration: 1 }, 0)
                 .to('.mob-image-foreground', { duration: 0.1, display: 'none' }, 1);
-    
+
             gsap.timeline({
                 scrollTrigger: {
                     trigger: '.main-text-container',
@@ -114,8 +114,8 @@ function startAnimation() {
                 }
             }).to('.image-foreground', { scale: 10, transformOrigin: 'center center', duration: 1 }, 0)
                 .to('.image-foreground', { duration: 0.1, display: 'none' }, 1);
-    
-    
+
+
             gsap.timeline({
                 scrollTrigger: {
                     trigger: '.main-text-container',
@@ -128,7 +128,7 @@ function startAnimation() {
     }
 }
 function imageGalleryAnimation() {
-    if(document.querySelector('.image-gallery')){
+    if (document.querySelector('.image-gallery')) {
         if (isDesktop) {
             let image = document.querySelector('.image-gallery__fixed-image')
             let container = document.querySelector('.image-gallery')
@@ -202,7 +202,7 @@ function priceListInit() {
                 accordeon.onclick = () => {
                     if (accordeon.classList.contains('active')) {
                         closeAccordeon(accordeon)
-                        if(priceListContentWrapper){
+                        if (priceListContentWrapper) {
                             setPriceListHeight('accordeon', accordeon, 'delHeight')
                         }
                     } else {
@@ -216,7 +216,7 @@ function priceListInit() {
                             resetBufferTime += delay
                         } else {
                             openAccordeon(accordeon)
-                            if(priceListContentWrapper) {
+                            if (priceListContentWrapper) {
                                 setPriceListHeight('accordeon', accordeon, 'addHeight')
                             }
                         }
@@ -340,13 +340,16 @@ function priceListInit() {
         priceListHoverAnimaton()
     }
 }
-function udsAnimation(){
-    if(document.querySelector('.UDS-mockup')){
-        if(isDesktop){
+function udsAnimation() {
+    let headerHeight = remToPx(10.6)
+    let centerOffset = ((((winHeight-headerHeight) - remToPx(62)) / 2)+headerHeight)
+
+    if (document.querySelector('.UDS-mockup')) {
+        if (isDesktop) {
             gsap.timeline({
-                scrollTrigger:{
+                scrollTrigger: {
                     trigger: '.UDS-mockup',
-                    start: 'top '+ (((winHeight - remToPx(62)) / 2) / winHeight * 100) + '%',
+                    start: 'top '+ (centerOffset / winHeight * 100) + '%',
                     end: '+='+remToPx(40),
                     pin: true,
                 }
@@ -483,21 +486,21 @@ function fixedImageAnimation() {
         preloadImages(imagesToPreload);
 
         let backgroundElem = document.querySelector('.fixed-background')
-        if(backgroundElem){
+        if (backgroundElem) {
             setTriggerOnElement('.one-screen-transparent-1', "first-image.png", backgroundElem)
         }
 
         let mastersBackgroundElem = document.querySelector('.master-fixed-background')
-        if(mastersBackgroundElem){
+        if (mastersBackgroundElem) {
             setTriggerOnElement('.one-screen-transparent-2', "second-image.png", mastersBackgroundElem)
             setTriggerOnElement('.one-screen-transparent-3', "third-image.png", mastersBackgroundElem)
             setTriggerOnElement('.one-screen-transparent-4', "second-image.png", mastersBackgroundElem)
         }
 
     } else {
-        let fixedWrappersPairs = [['.fixed-wrapper-2', 3],['.fixed-wrapper-3', 3],['.fixed-wrapper-4', 1.8]]
-        fixedWrappersPairs.forEach(fixedWrapperPair=>{            
-            if(!document.querySelector(fixedWrapperPair[0])) return
+        let fixedWrappersPairs = [['.fixed-wrapper-2', 3], ['.fixed-wrapper-3', 3], ['.fixed-wrapper-4', 1.75]]
+        fixedWrappersPairs.forEach(fixedWrapperPair => {
+            if (!document.querySelector(fixedWrapperPair[0])) return
             setElementFixed(fixedWrapperPair[0], fixedWrapperPair[1])
         })
     }
@@ -517,14 +520,15 @@ function setElementFixed(selector, selfRelativeScrolls) {
         endYPosition = '0'
     }
 
-
     // высчитывает процент от верха экрана для старт позиции чтобы элемент всегда был в центре экрана при скролле, вне зависимости от того какая у него высота
-    let centeredScrollOffset = 100 - (((winHeight - containerHeight) / 2) / winHeight * 100)
+    let heightWithoutHeader = winHeight - remToPx(10.6);
+    let centerOffset = (heightWithoutHeader - containerHeight) / 2;
+    let percentageOffset = 100 - (centerOffset / winHeight * 100)
 
     gsap.timeline({
         scrollTrigger: {
             trigger: elem,
-            start: "top " + centeredScrollOffset + '%',
+            start: "top " + percentageOffset + '%',
             end: "+=" + containerHeight * selfRelativeScrolls,
             scrub: true,
         }
@@ -537,7 +541,7 @@ function serviceSectionInit() {
             speed: 700,
         })
     }
-    function servicesAnimationInit(){
+    function servicesAnimationInit() {
         let tl2 = gsap.timeline({
             scrollTrigger: {
                 trigger: '.services-slider',
