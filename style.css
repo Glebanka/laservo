@@ -641,16 +641,10 @@ html ::selection {
   letter-spacing: 0.02em;
 }
 .price-list-cell_first-col {
-  width: 69rem;
-  display: flex;
-  flex-flow: column;
-  gap: 1rem;
+  width: 72rem;
 }
-.price-list-cell_first-col-footer{
-  width: 35rem;
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
-  line-height: 1;
+.price-list-cell_full-width{
+  width: 100%;
 }
 .price-list-cell_heading {
   font-size: 1.6rem;
@@ -658,6 +652,17 @@ html ::selection {
   letter-spacing: 0.02em;
   opacity: 0.5;
   margin-bottom: 0.6rem;
+}
+.price-list-cell-container{
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+.price-list-cell_footer{
+  width: 35rem;
+  font-size: 1.6rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 .price-list__action {
   padding: 1.5rem 0 5rem;
@@ -1290,10 +1295,21 @@ html ::selection {
   .price-list-col {
     display: flex;
     flex-flow: column;
-    gap: 1rem;
+    gap: 1.6rem;
   }
   .price-list-cell_heading {
     margin-bottom: 0;
+  }
+  .price-list-cell-container{
+    display: flex;
+    flex-flow: column;
+    gap: .4rem;
+  }
+  .price-list-cell_footer{
+    width: 26rem;
+    font-size: 1.2rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
   }
   .price-list__action {
     margin-top: 1.5rem;
@@ -1303,6 +1319,12 @@ html ::selection {
     font-size: 1.2rem;
     line-height: 1;
     margin-top: 5rem;
+  }
+  .price-list-massage-container{
+    padding: 2.4rem 1rem 4rem;
+  }
+  .price-list-massage-more-info-link{
+    font-size: 1.2rem;
   }
   /* прайс лист */
 
@@ -1638,6 +1660,204 @@ html ::selection {
 }
 /* UDS конец */
 /* Страница прайс листа */
+
+
+
+
+
+/* Страница контактов */
+.addresses-page-text-container{
+  margin-top: 4rem;
+  display: flex;
+  flex-flow: column;
+  gap: 8rem;
+}
+.addresses-page-title{
+  font-weight: 300;
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--green-600);
+}
+.addresses-page-text{
+  font-size: 2rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 60rem;
+}
+@media only screen and (orientation: portrait) {
+  .addresses-page-title{
+    font-size: 4rem;
+  }
+  .addresses-page-text{
+    width: unset;
+    font-size: 1.6rem;
+  }
+  .addresses-page-text-container{
+    margin-top: 0;
+  }
+}
+/* Страница контактов */
+
+
+
+
+
+/* Страница оборудования */
+/* Оборудование */
+.our-equipment {
+  background-color: var(--green-100);
+}
+.our-equipment_pad-top {
+  padding-top: 52.8rem;
+}
+.our-equipment__title {
+  font-size: 10rem;
+  line-height: 1;
+  color: var(--green-600);
+  text-align: center;
+}
+.equipment {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+.equipment_pad-top {
+  padding-top: 60rem;
+}
+.equipment-image-container{
+  width: 60rem;
+  height: 120rem;
+  position: absolute;
+  top: 20rem;
+}
+.equipment-image {
+  width: 60rem;
+  height: 80rem;
+}
+.equipment-info {
+  display: flex;
+  flex-flow: column;
+  width: 70rem;
+  gap: 5rem;
+  margin-left: 75rem;
+}
+.equipment__title {
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--green-600);
+}
+.equipment-certification-info {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment__desc {
+  font-size: 2rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 60rem;
+}
+.equipment-certificates {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment-certificate {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.equipment-certificate__img {
+  width: 5rem;
+  height: 6rem;
+  flex-shrink: 0;
+}
+.equipment-ceritificate__name {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 38.3rem;
+}
+.equipment-advantages-info {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment__heading {
+  font-size: 2.4rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.equipment__text {
+  font-size: 2rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  width: 60rem;
+}
+.equipment__links {
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+}
+.equipment__link {
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+/* Оборудование конец */
+@media only screen and (orientation: portrait) {
+  /* Оборудование */
+  .our-equipment__title {
+    font-size: 4rem;
+    line-height: 1;
+  }
+  .equipment-image {
+    width: 34rem;
+    height: 68rem;
+    position: relative;
+    z-index: 2;
+  }
+  .equipment {
+    flex-flow: column;
+    gap: 10rem;
+    padding-top: 1rem;
+  }
+  .equipment-info {
+    width: unset;
+    gap: 3rem;
+  }
+  .equipment__title {
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+  .equipment__desc {
+    width: unset;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+  .equipment-ceritificate__name {
+    font-size: 1.4rem;
+    line-height: 1.4;
+    width: unset;
+  }
+  .equipment-certification-info {
+    gap: 2rem;
+  }
+  .equipment-advantages-info {
+    gap: 2rem;
+  }
+  .equipment__text {
+    font-size: 1.4rem;
+  }
+  /* Оборудование конец */
+}
+
+/* Страница оборудования */
+
+
+
+
+
 
 /* БЭМ-блоки */
 

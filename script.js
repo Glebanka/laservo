@@ -32,6 +32,166 @@ function refreshAllAnimations() {
     });
 }
 
+class Accordion {
+    constructor(selector, options = {}) {
+        this.accordions = document.querySelectorAll(selector);
+        this.options = Object.assign({
+            itemSelector: selector,
+            hoverBgSelector: '.accordion__bg',
+            bodySelector: '.accordion-body',
+            iconSelector: '.accordion-icon',
+            activeClass: 'active',
+            animationDuration: 200,
+            iconRotateAngle: 45,
+            heightOffset: 7.2, // высота в rem для закрытого состояния
+            resetBufferTime: 201, // Время буфера для обновления анимаций
+            wrapperSelector: '.price-list-content-wrapper',
+            onClick: null
+        }, options);
+        
+        this.init();
+    }
+    
+    init() {
+        if (this.accordions.length === 0) return;
+        
+        this.accordions.forEach(accordion => {
+            let accordionBody = accordion.querySelector(this.options.bodySelector);
+            accordionBody.onclick = (e) => e.stopPropagation();
+
+            accordion.onclick = () => {
+                if (accordion.classList.contains(this.options.activeClass)) {
+                    this.closeAccordion(accordion);
+                    this.updateWrapperHeight('delHeight', accordion);
+                } else {
+                    let activeAccordion = this.findActiveAccordion();
+                    if (activeAccordion) {
+                        this.openAccordion(accordion);
+                        this.closeAccordion(activeAccordion, 50); // Закрытие с задержкой
+                    } else {
+                        this.openAccordion(accordion);
+                        this.updateWrapperHeight('addHeight', accordion);
+                    }
+                }
+                
+                // Обновление всех анимаций через заданное время
+                setTimeout(this.refreshAnimations.bind(this), this.options.resetBufferTime);
+                
+                // дополнительный колбэк, если нужно повесить функцию при клике
+                if (typeof this.options.onClick === 'function') {
+                    this.options.onClick(accordion);
+                }
+            };
+        });
+        this.initHoverAnimations()
+    }
+
+    findActiveAccordion() {
+        return Array.from(this.accordions).find(acc => acc.classList.contains(this.options.activeClass));
+    }
+
+    closeAccordion(accordion, delay = 0) {
+        setTimeout(() => {
+            accordion.classList.remove(this.options.activeClass);
+            accordion.style.height = `${remToPx(this.options.heightOffset)}px`;
+            gsap.timeline().to(accordion.querySelector(this.options.iconSelector), { 
+                rotate: 0, transformOrigin: "center" 
+            });
+        }, delay);
+    }
+
+    openAccordion(accordion) {
+        accordion.classList.add(this.options.activeClass);
+        this.setAccordionActualSize(accordion);
+        gsap.timeline().to(accordion.querySelector(this.options.iconSelector), { 
+            rotate: this.options.iconRotateAngle, transformOrigin: "center" 
+        });
+    }
+
+    setAccordionActualSize(accordion) {
+        let accordionBody = accordion.querySelector(this.options.bodySelector);
+        accordion.style.height = `${this.getHeight(accordionBody) + remToPx(5.6) + remToPx(this.options.heightOffset)}px`;
+    }
+
+    updateWrapperHeight(action, accordion) {
+        let wrapper = document.querySelector(this.options.wrapperSelector);
+        if (!wrapper) return;
+
+        let bodyHeight = this.getHeight(accordion.querySelector(this.options.bodySelector));
+        let offset = remToPx(5.6); // Используем 5.6 rem как в исходном коде
+        let newHeight = (action === 'addHeight') 
+            ? this.getHeight(wrapper) + bodyHeight + offset
+            : this.getHeight(wrapper) - bodyHeight - offset;
+        
+        wrapper.style.height = `${newHeight}px`;
+
+        // Подстраиваем высоту обёртки к активному контенту через буферное время
+        setTimeout(() => {
+            wrapper.style.height = `${this.getHeight(document.querySelector('.price-list-content.active'))}px`;
+        }, this.options.resetBufferTime);
+    }
+
+    getHeight(element) {
+        return element.getBoundingClientRect().height;
+    }
+
+    refreshAnimations() {
+        // Функция для обновления всех анимаций
+        if (typeof refreshAllAnimations === 'function') {
+            refreshAllAnimations();
+        }
+    }
+
+    initHoverAnimations() {
+        if(isDesktop){
+            document.querySelectorAll(this.options.itemSelector).forEach(item => {
+                let itemHeight = item.getBoundingClientRect().height;
+                let itemBG = item.querySelector(this.options.hoverBgSelector);
+                let center = itemHeight / 2;
+    
+                item.addEventListener('pointerenter', (e) => {
+                    gsap.killTweensOf(itemBG);
+                    if (!item.classList.contains(this.options.activeClass)) {
+                        if (e.target !== e.currentTarget) return;
+                        
+                        let itemYPos = item.getBoundingClientRect().y;
+                        itemBG.style.opacity = '1';
+    
+                        let timeline = gsap.timeline();
+                        if (e.clientY > itemYPos + center) {
+                            timeline.fromTo(itemBG, { y: '101%' }, { y: 0, duration: 0.3 })
+                                    .to(itemBG, { opacity: 1, duration: 0.01 }, 0);
+                        } else {
+                            timeline.fromTo(itemBG, { y: '-101%' }, { y: 0, duration: 0.3 })
+                                    .to(itemBG, { opacity: 1, duration: 0.01 }, 0);
+                        }
+                    } else {
+                        itemBG.style.opacity = '0';
+                    }
+                });
+    
+                item.addEventListener('pointerleave', (e) => {
+                    gsap.killTweensOf(itemBG);
+                    if (!item.classList.contains(this.options.activeClass)) {
+                        let itemYPos = item.getBoundingClientRect().y;
+    
+                        let timeline = gsap.timeline();
+                        if (e.clientY > itemYPos + center) {
+                            timeline.fromTo(itemBG, { y: 0 }, { y: '101%', duration: 0.3 })
+                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                        } else {
+                            timeline.fromTo(itemBG, { y: 0 }, { y: '-101%', duration: 0.3 })
+                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                        }
+                    } else {
+                        itemBG.style.opacity = '0';
+                    }
+                });
+            });
+        }
+    }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -54,6 +214,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     footerAnimation()
     fixedImageAnimation()
     udsAnimation()
+    equipmentAnimation()
     // ourMastersAnimation()
     // secretAnimation()
 });
@@ -150,6 +311,13 @@ function imageGalleryAnimation() {
 }
 
 function priceListInit() {
+    let accordeonClass = new Accordion('.price-list-item', {
+        bodySelector: '.price-list-item__body',
+        iconSelector: '.price-list-item__icon',
+        hoverBgSelector: '.price-list-item__bg',
+        wrapperSelector: '.price-list-content-wrapper',
+        resetBufferTime: 201
+    });
     function tabsInit() {
         document.querySelectorAll('.tab').forEach(tab => {
             const tabsContainer = tab.parentElement;
@@ -170,11 +338,11 @@ function priceListInit() {
                     let content = document.querySelector('.price-list-content-' + tab.dataset.contentId)
                     content.classList.add('active')
 
-                    let activeAccordeon = findActiveAccordeon()
+                    let activeAccordeon = accordeonClass.findActiveAccordion()
                     if (activeAccordeon) {
-                        closeAccordeon(activeAccordeon)
+                        accordeonClass.closeAccordion(activeAccordeon)
                     }
-                    setPriceListHeight('tab')
+                    setPriceListHeight()
                     if (tab.dataset.contentId == 1) {
                         gsap.timeline().to('.price-list-content-wrapper', { x: 0, ease: "back.out(1.5)", duration: 1 })
                     } else if (tab.dataset.contentId == 2) {
@@ -187,158 +355,15 @@ function priceListInit() {
             }
         });
     }
-    function accordeonsInit() {
-        const accordeons = document.querySelectorAll('.price-list-item');
-        if (accordeons) {
-            accordeons.forEach(accordeon => {
-                let accordeonBody = accordeon.querySelector('.price-list-item__body')
-                // время в мс после которого обновятся все анимации (зависит от времени открытия аккордеона)
-                let resetBufferTime = 201
-                // убираем возможность кликать внутри
-                accordeonBody.onclick = (e) => e.stopPropagation();
-
-                let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
-
-                accordeon.onclick = () => {
-                    if (accordeon.classList.contains('active')) {
-                        closeAccordeon(accordeon)
-                        if (priceListContentWrapper) {
-                            setPriceListHeight('accordeon', accordeon, 'delHeight')
-                        }
-                    } else {
-                        // проходимся второй раз по элементам и ищем уже активный
-                        let activeAccordeon = findActiveAccordeon()
-
-                        if (activeAccordeon) {
-                            openAccordeon(accordeon)
-                            let delay = 50
-                            setTimeout(() => closeAccordeon(activeAccordeon), delay)
-                            resetBufferTime += delay
-                        } else {
-                            openAccordeon(accordeon)
-                            if (priceListContentWrapper) {
-                                setPriceListHeight('accordeon', accordeon, 'addHeight')
-                            }
-                        }
-                    }
-                    setTimeout(refreshAllAnimations, resetBufferTime);
-                }
-            })
-        }
-    }
-    function accordeonSetActualSize(accordeon) {
-        let accordeonBody = accordeon.querySelector('.price-list-item__body')
-        accordeon.style.height = accordeonBody.getBoundingClientRect().height +
-            parseFloat(getComputedStyle(accordeonBody).marginTop) +
-            parseFloat(getComputedStyle(accordeonBody).marginBottom) +
-            remToPx(7.2) + 'px'
-    }
-    function findActiveAccordeon() {
-        let activeAccordeon
-        document.querySelectorAll('.price-list-item').forEach(accordeon => {
-            if (accordeon.classList.contains('active')) {
-                activeAccordeon = accordeon
-            }
-        })
-        return activeAccordeon
-    }
-    function closeAccordeon(accordeon) {
-        accordeon.classList.remove('active');
-        accordeon.style.height = remToPx(7.2) + "px"
-        // анимируем иконку
-        gsap.timeline().to(accordeon.querySelector('.price-list-item__icon'), { rotate: 0, transformOrigin: "center" }, 0)
-    }
-    function openAccordeon(accordeon) {
-        accordeon.classList.add('active');
-        accordeonSetActualSize(accordeon)
-        // анимируем иконку
-        gsap.timeline().to(accordeon.querySelector('.price-list-item__icon'), { rotate: 45, transformOrigin: "center" }, 0)
-    }
-    function setPriceListHeight(source, target, action) {
+    function setPriceListHeight() {
         let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
-        // Если вызов был сделан из таба, то мы врапперу ставим такую же высоту как у активного элемента
-        if (source == 'tab') {
+        // врапперу ставим такую же высоту как у активного элемента
             priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
-        } else if (source == 'accordeon') {
-            // Если мобилка, то ставим первое значение, иначе второе
-            let priceListItemBodyMargin = (isMobile) ? remToPx(5.6) : remToPx(5.6)
-            let priceListItemBodyHeight = getHeight(target.querySelector('.price-list-item__body')) + priceListItemBodyMargin
-
-            if (action == 'addHeight') {
-                priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) + priceListItemBodyHeight) + "px"
-            } else if (action == 'delHeight') {
-                priceListContentWrapper.style.height = (getHeight(priceListContentWrapper) - priceListItemBodyHeight) + "px"
-            }
-
-            setTimeout(
-                () => { priceListContentWrapper.style.height = getHeight(document.querySelector('.price-list-content.active')) + 'px' }
-                , 201)
-        }
-
         setTimeout(() => {
             refreshAllAnimations()
         }, 1001);
-
-        function getHeight(element) {
-            return element.getBoundingClientRect().height;
-        }
     }
-    function priceListHoverAnimaton() {
-        document.querySelectorAll('.price-list-item').forEach(item => {
-            let itemHeight = item.getBoundingClientRect().height
-            let itemBG = item.querySelector('.price-list-item__bg')
-
-            let center = itemHeight / 2
-            let tl = gsap.timeline()
-            item.addEventListener('pointerenter', (e) => {
-                tl.killTweensOf(itemBG)
-                if (!item.classList.contains('active')) {
-                    if (e.target !== e.currentTarget) return; // Игнорируем внутренние элементы
-                    itemYPos = item.getBoundingClientRect().y
-                    itemBG.style.opacity = '1'
-
-                    if (e.clientY > itemYPos + center) {
-                        // снизу
-                        tl = gsap.timeline().fromTo(itemBG, { y: '101%' }, { y: 0, duration: 0.3 })
-                            .to(itemBG, { opacity: 1, duration: 0.01 }, 0)
-                    } else {
-                        // сверху
-                        tl = gsap.timeline().fromTo(itemBG, { y: '-101%' }, { y: 0, duration: 0.3 })
-                            .to(itemBG, { opacity: 1, duration: 0.01 }, 0)
-                    }
-                } else {
-                    itemBG.style.opacity = '0'
-                }
-
-            })
-            item.addEventListener('pointerleave', (e) => {
-                tl.kill()
-                if (!item.classList.contains('active')) {
-                    if (e.target !== e.currentTarget) return; // Игнорируем внутренние элементы
-                    itemYPos = item.getBoundingClientRect().y
-
-                    if (e.clientY > itemYPos + center) {
-                        // снизу
-                        tl = gsap.timeline().fromTo(itemBG, { y: 0 }, { y: '101%', duration: 0.3 })
-                            .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3)
-                    } else {
-                        // сверху
-                        tl = gsap.timeline().fromTo(itemBG, { y: 0 }, { y: "-101%", duration: 0.3 })
-                            .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3)
-                    }
-                } else {
-                    itemBG.style.opacity = '0'
-                }
-            })
-        })
-    }
-
-
-    accordeonsInit()
     tabsInit()
-    if (isDesktop) {
-        priceListHoverAnimaton()
-    }
 }
 function udsAnimation() {
     let headerHeight = remToPx(10.6)
@@ -351,6 +376,22 @@ function udsAnimation() {
                     trigger: '.UDS-mockup',
                     start: 'top '+ (centerOffset / winHeight * 100) + '%',
                     end: '+='+remToPx(40),
+                    pin: true,
+                }
+            })
+        }
+    }
+}
+function equipmentAnimation() {
+    let headerHeight = remToPx(10.6)
+    let centerOffset = ((((winHeight-headerHeight) - remToPx(80)) / 2)+headerHeight)
+    if (document.querySelectorAll('.equipment-image').length > 0) {
+        if (isDesktop) {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.equipment-image',
+                    start: 'top '+ (centerOffset / winHeight * 100) + '%',
+                    end: '+='+remToPx(36),
                     pin: true,
                 }
             })
@@ -559,9 +600,11 @@ function serviceSectionInit() {
             }
         })
     }
-    servicesSliderInit()
-    if (isDesktop) {
-        servicesAnimationInit()
+    if(document.querySelector('.services-slider')){
+        servicesSliderInit()
+        if (isDesktop) {
+            servicesAnimationInit()
+        }
     }
 }
 
