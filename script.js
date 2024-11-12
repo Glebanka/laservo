@@ -25,37 +25,46 @@ let htmlElem = document.querySelector('html')
 const preloadedImages = {};
 
 // пересчитывает анимации
-function refreshAllAnimations() {
+function refreshAllAnimations({
+    withoutSelector = '',
+} = {}) {
     // Обновляем все триггеры
     ScrollTrigger.getAll().forEach(trigger => {
+        if (withoutSelector != '' && trigger.vars.trigger == withoutSelector && trigger.vars.trigger.classList.contains(withoutSelector)) return
         trigger.refresh();
     });
 }
 
+// класс для возможности переиспользования элемента аккордиона (вызываешь класс и задаешь селекторы)
 class Accordion {
     constructor(selector, options = {}) {
         this.accordions = document.querySelectorAll(selector);
         this.options = Object.assign({
             itemSelector: selector,
             hoverBgSelector: '.accordion__bg',
-            bodySelector: '.accordion-body',
-            iconSelector: '.accordion-icon',
+            bodySelector: '.accordion__body',
+            titleSelector: '.accordion__title',
+            iconSelector: '.accordion__icon',
             activeClass: 'active',
             animationDuration: 200,
-            iconRotateAngle: 45,
             heightOffset: 7.2, // высота в rem для закрытого состояния
             resetBufferTime: 201, // Время буфера для обновления анимаций
             wrapperSelector: '.price-list-content-wrapper',
             onClick: null
         }, options);
-        
+
         this.init();
     }
-    
+
     init() {
         if (this.accordions.length === 0) return;
-        
+
         this.accordions.forEach(accordion => {
+            // let heightOffset = parseFloat(getComputedStyle(accordion).paddingTop) + parseFloat(getComputedStyle(accordion).paddingTop) + parseFloat(getComputedStyle(document.querySelector(this.options.titleSelector)).fontSize)
+            // console.log(heightOffset);
+            accordion.style.height = remToPx(this.options.heightOffset) + 'px'
+            accordion.querySelector(this.options.hoverBgSelector).style.height = remToPx(this.options.heightOffset) + 'px'
+
             let accordionBody = accordion.querySelector(this.options.bodySelector);
             accordionBody.onclick = (e) => e.stopPropagation();
 
@@ -73,10 +82,10 @@ class Accordion {
                         this.updateWrapperHeight('addHeight', accordion);
                     }
                 }
-                
+
                 // Обновление всех анимаций через заданное время
                 setTimeout(this.refreshAnimations.bind(this), this.options.resetBufferTime);
-                
+
                 // дополнительный колбэк, если нужно повесить функцию при клике
                 if (typeof this.options.onClick === 'function') {
                     this.options.onClick(accordion);
@@ -94,8 +103,11 @@ class Accordion {
         setTimeout(() => {
             accordion.classList.remove(this.options.activeClass);
             accordion.style.height = `${remToPx(this.options.heightOffset)}px`;
-            gsap.timeline().to(accordion.querySelector(this.options.iconSelector), { 
-                rotate: 0, transformOrigin: "center" 
+            if (typeof this.options.iconAni === 'function') {
+                this.options.onClick(accordion);
+            }
+            gsap.timeline().to(accordion.querySelector(this.options.iconSelector), {
+                rotate: 0, transformOrigin: "center"
             });
         }, delay);
     }
@@ -103,8 +115,8 @@ class Accordion {
     openAccordion(accordion) {
         accordion.classList.add(this.options.activeClass);
         this.setAccordionActualSize(accordion);
-        gsap.timeline().to(accordion.querySelector(this.options.iconSelector), { 
-            rotate: this.options.iconRotateAngle, transformOrigin: "center" 
+        gsap.timeline().to(accordion.querySelector(this.options.iconSelector), {
+            rotate: 45, transformOrigin: "center"
         });
     }
 
@@ -119,10 +131,10 @@ class Accordion {
 
         let bodyHeight = this.getHeight(accordion.querySelector(this.options.bodySelector));
         let offset = remToPx(5.6); // Используем 5.6 rem как в исходном коде
-        let newHeight = (action === 'addHeight') 
+        let newHeight = (action === 'addHeight')
             ? this.getHeight(wrapper) + bodyHeight + offset
             : this.getHeight(wrapper) - bodyHeight - offset;
-        
+
         wrapper.style.height = `${newHeight}px`;
 
         // Подстраиваем высоту обёртки к активному контенту через буферное время
@@ -143,56 +155,112 @@ class Accordion {
     }
 
     initHoverAnimations() {
-        if(isDesktop){
+        if (isDesktop) {
             document.querySelectorAll(this.options.itemSelector).forEach(item => {
                 let itemHeight = item.getBoundingClientRect().height;
                 let itemBG = item.querySelector(this.options.hoverBgSelector);
                 let center = itemHeight / 2;
-    
-                item.addEventListener('pointerenter', (e) => {
-                    gsap.killTweensOf(itemBG);
-                    if (!item.classList.contains(this.options.activeClass)) {
-                        if (e.target !== e.currentTarget) return;
-                        
-                        let itemYPos = item.getBoundingClientRect().y;
-                        itemBG.style.opacity = '1';
-    
-                        let timeline = gsap.timeline();
-                        if (e.clientY > itemYPos + center) {
-                            timeline.fromTo(itemBG, { y: '101%' }, { y: 0, duration: 0.3 })
+
+                if (itemBG) {
+                    item.addEventListener('pointerenter', (e) => {
+                        gsap.killTweensOf(itemBG);
+                        if (!item.classList.contains(this.options.activeClass)) {
+                            if (e.target !== e.currentTarget) return;
+
+                            let itemYPos = item.getBoundingClientRect().y;
+                            itemBG.style.opacity = '1';
+
+                            let timeline = gsap.timeline();
+                            if (e.clientY > itemYPos + center) {
+                                timeline.fromTo(itemBG, { y: '101%' }, { y: 0, duration: 0.3 })
                                     .to(itemBG, { opacity: 1, duration: 0.01 }, 0);
-                        } else {
-                            timeline.fromTo(itemBG, { y: '-101%' }, { y: 0, duration: 0.3 })
+                            } else {
+                                timeline.fromTo(itemBG, { y: '-101%' }, { y: 0, duration: 0.3 })
                                     .to(itemBG, { opacity: 1, duration: 0.01 }, 0);
-                        }
-                    } else {
-                        itemBG.style.opacity = '0';
-                    }
-                });
-    
-                item.addEventListener('pointerleave', (e) => {
-                    gsap.killTweensOf(itemBG);
-                    if (!item.classList.contains(this.options.activeClass)) {
-                        let itemYPos = item.getBoundingClientRect().y;
-    
-                        let timeline = gsap.timeline();
-                        if (e.clientY > itemYPos + center) {
-                            timeline.fromTo(itemBG, { y: 0 }, { y: '101%', duration: 0.3 })
-                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                            }
                         } else {
-                            timeline.fromTo(itemBG, { y: 0 }, { y: '-101%', duration: 0.3 })
-                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                            itemBG.style.opacity = '0';
                         }
-                    } else {
-                        itemBG.style.opacity = '0';
-                    }
-                });
+                    });
+
+                    item.addEventListener('pointerleave', (e) => {
+                        gsap.killTweensOf(itemBG);
+                        if (!item.classList.contains(this.options.activeClass)) {
+                            let itemYPos = item.getBoundingClientRect().y;
+
+                            let timeline = gsap.timeline();
+                            if (e.clientY > itemYPos + center) {
+                                timeline.fromTo(itemBG, { y: 0 }, { y: '101%', duration: 0.3 })
+                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                            } else {
+                                timeline.fromTo(itemBG, { y: 0 }, { y: '-101%', duration: 0.3 })
+                                    .to(itemBG, { opacity: 0, duration: 0.01 }, 0.3);
+                            }
+                        } else {
+                            itemBG.style.opacity = '0';
+                        }
+                    });
+                }
             });
         }
     }
 }
 
+// функцию можно переиспользовать, задавая все селекторы
+function tabsInit({
+    tabSelector = '.tab',
+    contentSelector = '.tab-content',
+    parentElementSelector = '',
+    onClick = null,
+} = {}) {
+    // если задан parentElementSelector, то выбираем его как родителя, если нет то document
+    const parentElement = parentElementSelector !== '' ? document.querySelector(parentElementSelector) : document
+    const tabs = parentElement.querySelectorAll(tabSelector);
+    const contents = parentElement.querySelectorAll(contentSelector);
 
+    tabs.forEach(tab => {
+        const tabsContainer = tab.parentElement;
+        tab.onclick = () => {
+            if (!tab.classList.contains('active')) {
+                // Деактивация других табов и контента
+                tabsContainer.querySelectorAll('.tab').forEach(otherTab => { otherTab.classList.remove('active'); });
+                contents.forEach(elem => { elem.classList.remove('active') })
+
+                // Активация текущего таба и его контента
+                tab.classList.add('active')
+                // строка в формате .tab-content-1, где 1 = data-content-id 
+                const content = parentElement.querySelector(`${contentSelector}-${tab.dataset.contentId}`)
+                content.classList.add('active')
+
+                // Вызываем onClick, передавая tab и content
+                if (typeof onClick === 'function') {
+                    onClick(tab, content);
+                }
+
+            }
+        }
+    });
+}
+
+// функцию можно переиспользовать, соблюдая структуру вложенности классов и задавая parentElementSelector
+function detailsInit({
+    parentElementSelector = ''
+} = {}) {
+    // если задан parentElementSelector, то выбираем его как родителя, если нет то document
+    const parentElement = parentElementSelector !== '' ? document.querySelector(parentElementSelector) : document
+    const detailsElem = parentElement.querySelector('.details')
+    const detailsContent = parentElement.querySelector('.details__content-container')
+    const detailsIcon = detailsElem.querySelector('.details__plus-icon')
+
+    detailsContent.style.height = detailsElem.querySelector('.details__first-content').getBoundingClientRect().height + 'px'
+
+    detailsIcon.addEventListener('click', () => {
+        detailsContent.style.height = detailsContent.querySelector('.details__content-wrapper').getBoundingClientRect().height + 'px'
+        detailsIcon.style.opacity = 0
+
+        setTimeout(() => refreshAllAnimations(), 301)
+    })
+}
 
 document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -201,12 +269,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
     scrollPluginsInit()
     startAnimation()
     imageGalleryAnimation()
-    priceListInit()
+    priceListSectionInit()
+    priceListPageInit()
+    faqInit()
+    reviewsTabsInit()
+    promoSectionInit()
+    compareSectionInit()
+    equipmentAnimation()
+    // advicesSectionInit()
 
     fixedTextAnimation()
-    if (isDesktop) {
-        iconBtnAnimation()
-    }
+    iconBtnAnimation()
     serviceSectionInit()
     ourAdvantagesAnimation()
     yandexMapsInit()
@@ -214,13 +287,28 @@ document.addEventListener("DOMContentLoaded", (event) => {
     footerAnimation()
     fixedImageAnimation()
     udsAnimation()
-    equipmentAnimation()
-    // ourMastersAnimation()
-    // secretAnimation()
+    fadeInScrollAnimation()
 });
 
 
 // functions initializing:
+
+function fadeInScrollAnimation() {
+    const elements = document.querySelectorAll('.fade-in-scroll');
+
+    if (elements.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.9 });
+
+        elements.forEach((el) => observer.observe(el));
+    }
+}
 
 function scrollPluginsInit() {
     gsap.registerPlugin(ScrollTrigger);
@@ -310,72 +398,192 @@ function imageGalleryAnimation() {
     }
 }
 
-function priceListInit() {
-    let accordeonClass = new Accordion('.price-list-item', {
-        bodySelector: '.price-list-item__body',
-        iconSelector: '.price-list-item__icon',
-        hoverBgSelector: '.price-list-item__bg',
-        wrapperSelector: '.price-list-content-wrapper',
-        resetBufferTime: 201
-    });
-    function tabsInit() {
-        document.querySelectorAll('.tab').forEach(tab => {
-            const tabsContainer = tab.parentElement;
-            tab.onclick = () => {
-                setTimeout(() => {
-                    refreshAllAnimations()
-                }, 1001);
-                if (!tab.classList.contains('active')) {
-                    tab.classList.add('active')
-                    tabsContainer.querySelectorAll('.tab').forEach(otherTab => {
-                        if (otherTab !== tab) {
-                            otherTab.classList.remove('active');
-                        }
-                    });
-                    document.querySelectorAll('.price-list-content').forEach(elem => {
-                        elem.classList.remove('active')
-                    })
-                    let content = document.querySelector('.price-list-content-' + tab.dataset.contentId)
-                    content.classList.add('active')
+function reviewsTabsInit() {
+    if (document.querySelector('.review-page')) {
+        tabsInit({
+            tabSelector: '.platform-tab',
+            contentSelector: '.reviews-wrapper',
+            parentElementSelector: '.review-place_tarskaya',
+            onClick: (tab, content) => {
+                const wrapper = content.closest('.reviews-content-wrapper');
 
-                    let activeAccordeon = accordeonClass.findActiveAccordion()
-                    if (activeAccordeon) {
-                        accordeonClass.closeAccordion(activeAccordeon)
-                    }
-                    setPriceListHeight()
-                    if (tab.dataset.contentId == 1) {
-                        gsap.timeline().to('.price-list-content-wrapper', { x: 0, ease: "back.out(1.5)", duration: 1 })
-                    } else if (tab.dataset.contentId == 2) {
-                        gsap.timeline().to('.price-list-content-wrapper', { x: "-50%", ease: "back.in(1.5)", duration: 1 })
-                    } else {
-                        gsap.timeline().to('.price-list-content-wrapper', { x: "-100%", ease: "back.in(1.5)", duration: 1 })
-                    }
-
+                let position;
+                let ease;
+                switch (tab.dataset.contentId) {
+                    case '1':
+                        position = '0%';
+                        ease = "back.out(1.5)";
+                        break;
+                    case '2':
+                        position = '-50%';
+                        ease = "back.in(1.5)";
+                        break;
+                    case '3':
+                        position = '-100%';
+                        ease = "back.in(1.5)";
+                        break;
+                    case '4':
+                        position = '-150%';
+                        ease = "back.in(1.5)";
+                        break;
                 }
+                // Применение анимации к wrapper
+                gsap.timeline().to(wrapper, { x: position, ease: ease, duration: 1 });
+            }
+        })
+        tabsInit({
+            tabSelector: '.platform-tab',
+            contentSelector: '.reviews-wrapper',
+            parentElementSelector: '.review-place_leviy',
+            onClick: (tab, content) => {
+                const wrapper = content.closest('.reviews-content-wrapper');
+
+                let position;
+                let ease;
+                switch (tab.dataset.contentId) {
+                    case '1':
+                        position = '0%';
+                        ease = "back.out(1.5)";
+                        break;
+                    case '2':
+                        position = '-50%';
+                        ease = "back.in(1.5)";
+                        break;
+                    case '3':
+                        position = '-100%';
+                        ease = "back.in(1.5)";
+                        break;
+                    case '4':
+                        position = '-150%';
+                        ease = "back.in(1.5)";
+                        break;
+                }
+                // Применение анимации к wrapper
+                gsap.timeline().to(wrapper, { x: position, ease: ease, duration: 1 });
+            }
+        })
+    }
+}
+
+function promoSectionInit() {
+    if (document.querySelector('.promo')) {
+        detailsInit({ parentElementSelector: '.promo' })
+    }
+}
+
+function compareSectionInit() {
+    if (document.querySelector('.compare')) {
+        const slider = new Swiper('.compare-slider', {
+            slidesPerView: 'auto',
+            speed: 700,
+            navigation: {
+                nextEl: '.compare-slider__control.right',
+                prevEl: '.compare-slider__control.left',
+            },
+        })
+
+    }
+}
+
+function advicesSectionInit() {
+    let elem = document.querySelector('.advices')
+    if (elem) {
+        if (isDesktop) {
+            let previousElem = elem.previousElementSibling;
+            previousElem.style.paddingBottom = '25rem'
+            elem.style.paddingTop = '5rem'
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: previousElem,
+                    start: '105% bottom',
+                    end: "+=" + winHeight,
+                    markers: true,
+                    scrub: true,
+                    onLeaveBack: () => {
+                        previousElem.style.transform = 'unset'
+                    }
+                }
+            }).fromTo(previousElem, { y: 0 }, { y: winHeight, ease: 'none' })
+            previousElem.style.transform = 'unset'
+        }
+    }
+}
+function priceListPageInit(){
+    if (document.querySelectorAll('.price-list-content').length > 0) {
+        let accordeonClass = new Accordion('.price-list-item', {
+            bodySelector: '.price-list-item__body',
+            iconSelector: '.price-list-item__icon',
+            titleSelector: '.price-list-item__title',
+            hoverBgSelector: '.price-list-item__bg',
+            wrapperSelector: '.price-list-content-wrapper',
+            resetBufferTime: 201
+        });
+    }
+}
+function priceListSectionInit() {
+    if (document.querySelector('.price-list')) {
+        let accordeonClass = new Accordion('.price-list-item', {
+            bodySelector: '.price-list-item__body',
+            iconSelector: '.price-list-item__icon',
+            titleSelector: '.price-list-item__title',
+            hoverBgSelector: '.price-list-item__bg',
+            wrapperSelector: '.price-list-content-wrapper',
+            resetBufferTime: 201
+        });
+        tabsInit({
+            tabSelector: '.tab',
+            contentSelector: '.price-list-content',
+            wrapperSelector: '.tab-container',
+            parentElementSelector: '.price-list',
+            onClick: (tab, content) => {
+                setPriceListHeight()
+                let activeAccordeon = accordeonClass.findActiveAccordion()
+                if (activeAccordeon) {
+                    accordeonClass.closeAccordion(activeAccordeon)
+                }
+
+                const wrapper = content.closest('.price-list-content-wrapper');
+                let position;
+                let ease;
+                switch (tab.dataset.contentId) {
+                    case '1':
+                        position = '0%';
+                        ease = "back.out(1.5)";
+                        break;
+                    case '2':
+                        position = '-50%';
+                        ease = "back.in(1.5)";
+                        break;
+                    case '3':
+                        position = '-100%';
+                        ease = "back.in(1.5)";
+                        break;
+                }
+                // Применение анимации к wrapper
+                gsap.timeline().to(wrapper, { x: position, ease: ease, duration: 1 });
             }
         });
     }
     function setPriceListHeight() {
         let priceListContentWrapper = document.querySelector(".price-list-content-wrapper")
         // врапперу ставим такую же высоту как у активного элемента
-            priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
+        priceListContentWrapper.style.height = document.querySelector('.price-list-content.active').getBoundingClientRect().height + 'px'
         setTimeout(() => {
             refreshAllAnimations()
         }, 1001);
     }
-    tabsInit()
 }
 function udsAnimation() {
     let headerHeight = remToPx(10.6)
-    let centerOffset = ((((winHeight-headerHeight) - remToPx(62)) / 2)+headerHeight)
+    let centerOffset = ((((winHeight - headerHeight) - remToPx(62)) / 2) + headerHeight)
 
     if (document.querySelector('.UDS-mockup')) {
         if (isDesktop) {
             gsap.timeline({
                 scrollTrigger: {
                     trigger: '.UDS-mockup',
-                    start: 'top '+ (centerOffset / winHeight * 100) + '%',
-                    end: '+='+remToPx(40),
+                    start: 'top ' + (centerOffset / winHeight * 100) + '%',
+                    end: '+=' + remToPx(40),
                     pin: true,
                 }
             })
@@ -384,16 +592,21 @@ function udsAnimation() {
 }
 function equipmentAnimation() {
     let headerHeight = remToPx(10.6)
-    let centerOffset = ((((winHeight-headerHeight) - remToPx(80)) / 2)+headerHeight)
-    if (document.querySelectorAll('.equipment-image').length > 0) {
+    let centerOffset = ((((winHeight - headerHeight) - remToPx(80)) / 2) + headerHeight)
+    if (document.querySelectorAll('.equipment').length > 0) {
         if (isDesktop) {
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: '.equipment-image',
-                    start: 'top '+ (centerOffset / winHeight * 100) + '%',
-                    end: '+='+remToPx(36),
-                    pin: true,
-                }
+            document.querySelectorAll('.equipment').forEach(section => {
+                let image = section.querySelector('.equipment-image')
+                let containerHeight = section.querySelector('.equipment-info').getBoundingClientRect().height - remToPx(45)
+                gsap.timeline({
+                    scrollTrigger: {
+                        trigger: image,
+                        start: 'top ' + (centerOffset / winHeight * 100) + '%',
+                        end: '+=' + containerHeight,
+                        pin: true,
+                        // markers: true,
+                    }
+                })
             })
         }
     }
@@ -498,7 +711,7 @@ function setTriggerOnElement(selector, image, backgroundElem) {
             trigger: selector,
             start: 'top' + ' bottom',
             end: '+=' + (winHeight * 2),
-            // markers:true,
+            // markers: true,
             onEnter: () => turnImageOnBackground(image, backgroundElem),
             onLeave: () => turnGreenBackground(backgroundElem),
             onEnterBack: () => turnImageOnBackground(image, backgroundElem),
@@ -600,7 +813,7 @@ function serviceSectionInit() {
             }
         })
     }
-    if(document.querySelector('.services-slider')){
+    if (document.querySelector('.services-slider')) {
         servicesSliderInit()
         if (isDesktop) {
             servicesAnimationInit()
@@ -608,33 +821,45 @@ function serviceSectionInit() {
     }
 }
 
+function faqInit() {
+    if (document.querySelector('.faq')) {
+        let heightOffset = isDesktop ? 7.2 : 8.8
+        let accordeonClass = new Accordion('.accordion', {
+            wrapperSelector: null,
+            heightOffset: heightOffset,
+        });
+    }
+}
+
 function iconBtnAnimation() {
-    document.querySelectorAll('.icon-btn').forEach(btn => {
-        let icon = btn.querySelector('.icon-btn__icon');
-        let background = btn.querySelector('.icon-btn__bg');
-        let text = btn.querySelector('.icon-btn__text');
+    if (isDesktop) {
+        document.querySelectorAll('.icon-btn').forEach(btn => {
+            let icon = btn.querySelector('.icon-btn__icon');
+            let background = btn.querySelector('.icon-btn__bg');
+            let text = btn.querySelector('.icon-btn__text');
 
-        let tl = gsap.timeline()
-        btn.addEventListener('mouseenter', throttle(() => {
-            tl.killTweensOf(background)
+            let tl = gsap.timeline()
+            btn.addEventListener('mouseenter', throttle(() => {
+                tl.killTweensOf(background)
 
-            tl = gsap.timeline().to(icon, {
-                x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
-            }, 0)
-                .to(icon, { opacity: 0, duration: 0.05 }, 1)
-                .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
-                .to(text, { color: 'var(--white)', duration: 0.1 }, 1)
-                .to(background, { width: (btn.clientWidth + 'px'), duration: 0.1 }, 0)
-        }, 1200))
+                tl = gsap.timeline().to(icon, {
+                    x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
+                }, 0)
+                    .to(icon, { opacity: 0, duration: 0.05 }, 1)
+                    .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
+                    .to(text, { color: 'var(--white)', duration: 0.1 }, 1)
+                    .to(background, { width: (btn.clientWidth + 'px'), duration: 0.1 }, 0)
+            }, 1200))
 
-        btn.addEventListener('mouseout', throttle(() => {
-            tl.kill()
-            tl = gsap.timeline().to(icon, { x: 0, rotate: 0, scale: 1, duration: 1, ease: "slow(0.7,0.7,false)" }, 0)
-                .to(icon, { opacity: 1, duration: 0.01 }, 0)
-                .to(background, { opacity: 0, scale: 0, transformOrigin: 'right', duration: 0.3 }, 0)
-                .to(text, { color: 'var(--green-900)', duration: 0.1 }, 0)
-        }, 1200))
-    })
+            btn.addEventListener('mouseout', throttle(() => {
+                tl.kill()
+                tl = gsap.timeline().to(icon, { x: 0, rotate: 0, scale: 1, duration: 1, ease: "slow(0.7,0.7,false)" }, 0)
+                    .to(icon, { opacity: 1, duration: 0.01 }, 0)
+                    .to(background, { opacity: 0, scale: 0, transformOrigin: 'right', duration: 0.3 }, 0)
+                    .to(text, { color: 'var(--green-900)', duration: 0.1 }, 0)
+            }, 1200))
+        })
+    }
 }
 
 function yandexMapsInit() {
