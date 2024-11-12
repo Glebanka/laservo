@@ -476,12 +476,42 @@ function compareSectionInit() {
         const slider = new Swiper('.compare-slider', {
             slidesPerView: 'auto',
             speed: 700,
+            autoplay: true,
             navigation: {
                 nextEl: '.compare-slider__control.right',
                 prevEl: '.compare-slider__control.left',
             },
+            pagination: {
+                el: '.compare-slider__nav-container',
+                clickable: true,
+            },
+            on:{
+                slideChange: (e)=>{
+                    updatePaginationBackgrounds()
+                }
+            } 
         })
-
+        
+        function updatePaginationBackgrounds(){
+            const bullets = slider.pagination.bullets;
+            const activeIndex = slider.activeIndex;
+            console.log(bullets);
+            
+            bullets.forEach((bullet, index) => {
+                bullet.classList.remove('passed', 'current', 'upcoming');
+    
+                if (index < activeIndex) {
+                    bullet.classList.add('passed');
+                } else if (index === activeIndex) {
+                    // bullet.innerHTML = '<div class="swiper-pagination-bullet-fill"></div>'
+                    // bgFillElem = bullet.querySelector('.swiper-pagination-bullet-fill')
+                    // bgFillElem.style.width = bullet.getBoundingClientRect().width + 'px'
+                    
+                } else {
+                    bullet.classList.add('upcoming');
+                }
+            });
+        }
     }
 }
 
