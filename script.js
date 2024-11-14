@@ -35,6 +35,230 @@ function refreshAllAnimations({
     });
 }
 
+class CompareSlider {
+    constructor(selector, options = {}) {
+        this.slider = document.querySelector(selector)
+        this.options = Object.assign({
+            slideSelector: '',
+            imagesArray: [],
+            slideInterval: 3500,
+        }, options)
+        this.imagePairs = [];
+        this.currentSlideIndex = 0;
+        this.slideIntervalId = null;
+        this.transitionAnimationTimeline = gsap.timeline();
+        this.navBtns = null;
+
+        try {
+            this.init()
+        } catch (error) {
+            console.error("Ошибка при инициализации слайдера:", error.message)
+        }
+    }
+    init() {
+        this.validateOptions();
+        this.loadAndGroupImages();
+        this.navButtonsInit();
+        this.initVisibilityObserver();
+    }
+    initVisibilityObserver() {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.startSlideShow(); // Запускаем, если элемент в области видимости
+                } else {
+                    clearInterval(this.slideIntervalId); // Останавливаем, если элемент выходит из видимости
+                    this.transitionAnimationTimeline.kill();
+                }
+            });
+        });
+        observer.observe(this.slider);
+    }
+    validateOptions() {
+        if (this.slider == null) throw new Error("Такого элемента не существует");
+        if (this.options.slideSelector === '') throw new Error("Не задан параметр slideSelector");
+        if (this.options.imagesArray.length < 1) throw new Error("Не задан массив со слайдами imagesArray");
+        if (this.options.imagesArray.length % 2 !== 0) throw new Error("Количество изображений нечётное.")
+    }
+    loadAndGroupImages() {
+        const basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
+        const tempArray = [];
+
+        this.options.imagesArray.forEach((imageName) => {
+            const img = new Image();
+            img.src = `${basePath}assets/${imageName}`; // Загрузка изображения по пути
+            tempArray.push(img);
+
+            // Создаем пары изображений
+            if (tempArray.length === 2) {
+                this.imagePairs.push([...tempArray]);
+                tempArray.length = 0;
+            }
+        });
+    }
+    startSlideShow() {
+        this.updateNextSlideImages();
+        this.updateNavButtonsClasses();
+        // Запускаем новый интервал с сохранением его ID
+        this.slideIntervalId = setInterval(() => {
+            this.goToNextSlide();
+        }, this.options.slideInterval);
+    }
+    startNewSlideShow() {
+        // Очищаем существующий интервал
+        if (this.slideIntervalId) {
+            clearInterval(this.slideIntervalId)
+            this.transitionAnimationTimeline.kill()
+        };
+
+        this.transitionAnimation();
+        // Запускаем новый интервал с сохранением его ID
+        this.slideIntervalId = setInterval(() => {
+            this.goToNextSlide();
+        }, this.options.slideInterval);
+    }
+    transitionAnimation() {
+        let currentSlide = this.slider.querySelector(this.options.slideSelector + '.current')
+        let nextSlide = this.slider.querySelector(this.options.slideSelector + '.next')
+
+        nextSlide.style.cssText = `
+            z-index: 1;
+            position: relative;
+            order: 2;
+        `
+        this.transitionAnimationTimeline = gsap.timeline().fromTo(nextSlide, { y: 0 }, {
+            y: "-100%", duration: 0.5, onComplete: () => {
+                this.updateSlideClasses(currentSlide, nextSlide);
+            }
+        })
+
+    }
+    updateSlideClasses(currentSlide, nextSlide) {
+        currentSlide.classList.replace('current', 'next');
+        currentSlide.style.cssText = `
+        position: relative;
+        order: 2;
+        z-index: 1;
+        `;
+
+        nextSlide.classList.replace('next', 'current');
+        nextSlide.style.cssText = `
+            position: relative;
+            order: 1;
+            z-index: 0;
+        `;
+    }
+    goToNextSlide() {
+        // Переходим к следующему индексу, возвращаемся к началу, если массив кончился
+        this.currentSlideIndex = (this.currentSlideIndex + 1) % this.imagePairs.length;
+        this.updateNextSlideImages();
+        this.updateNavButtonsClasses();
+        this.transitionAnimation();
+    }
+
+    // Обновление изображений следующего слайда
+    updateNextSlideImages() {
+        const nextImages = this.imagePairs[this.currentSlideIndex];
+
+        const nextSlide = this.slider.querySelector(this.options.slideSelector + '.next');
+
+        const imgBlocks = nextSlide.querySelectorAll('.compare-slide__img')
+
+        imgBlocks.forEach((imgBlock, index) => {
+            imgBlock.src = nextImages[index].src
+        })
+    }
+
+    goToSlide(index) {
+        if (index < 0 || index >= this.imagePairs.length) return;
+
+        this.currentSlideIndex = index;
+        this.updateNavButtonsClasses();
+        this.updateNextSlideImages();
+        this.startNewSlideShow();
+    }
+
+    navButtonsInit() {
+        const navContainer = this.slider.parentElement.querySelector('.compare-slider__nav-container')
+
+        navContainer.innerHTML = this.imagePairs.map(() => `
+        <div class='compare-slider__nav'>
+            <div class="compare-slider__nav-fill"></div>
+        </div>`
+        ).join('');
+
+        this.navBtns = navContainer.querySelectorAll('.compare-slider__nav')
+
+        this.navBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                this.goToSlide(index)
+            })
+        })
+
+        this.defineActiveNavBtnWidth(navContainer)
+    }
+
+    defineActiveNavBtnWidth(navContainer) {
+        const navBtnWidth = isDesktop ? remToPx(4) : remToPx(1)
+        const activeNavBtnWidth = navContainer.getBoundingClientRect().width -
+            ((navBtnWidth * (this.imagePairs.length - 1)) + (remToPx(1) * (this.imagePairs.length - 1)))
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+          .compare-slider__nav-fill {
+            --active-nav-btn-width: ${activeNavBtnWidth}px;
+          }
+        `;
+        document.head.appendChild(style);
+    }
+
+    updateNavButtonsClasses() {
+        // console.log(this.currentSlideIndex);
+        this.navBtns.forEach((btn, index) => {
+            if (index == this.currentSlideIndex) {
+                this.navBtns.forEach((btn) => {
+                    btn.classList.remove('active')
+                })
+                btn.classList.remove('passed')
+                btn.classList.add('active')
+                this.animateNavProgressBar(btn)
+                // console.log('попал в активный '+index);
+            } else if (index < this.currentSlideIndex) {
+                // console.log('попал в passed '+index);
+                btn.classList.add('passed')
+            } else if (index >= this.currentSlideIndex) {
+                // console.log('попал в unpassed '+index);
+                btn.classList.remove('passed')
+            }
+        })
+    }
+    animateNavProgressBar(navBtn) {
+        const fillElem = navBtn.querySelector('.compare-slider__nav-fill')
+
+        this.slider.parentElement.querySelectorAll('.compare-slider__nav-fill').forEach(fillElem => {
+            gsap.set(fillElem, { x: '-100%', overwrite: 'auto', force3D: false });
+        });
+
+
+        if (fillElem.currentAnimation) {
+            fillElem.currentAnimation.kill();
+        }
+
+        fillElem.currentAnimation = gsap.fromTo(
+            fillElem,
+            { x: '-100%' },{
+                x: '0',
+                duration: this.options.slideInterval / 1000,
+                ease: "none",
+                onComplete: () => {
+                    gsap.set(fillElem, { x: '-100%' });
+                    fillElem.currentAnimation = null;
+                }
+            }
+        );
+    }
+}
+
 // класс для возможности переиспользования элемента аккордиона (вызываешь класс и задаешь селекторы)
 class Accordion {
     constructor(selector, options = {}) {
@@ -472,46 +696,32 @@ function promoSectionInit() {
 }
 
 function compareSectionInit() {
-    if (document.querySelector('.compare')) {
-        const slider = new Swiper('.compare-slider', {
-            slidesPerView: 'auto',
-            speed: 700,
-            autoplay: true,
-            navigation: {
-                nextEl: '.compare-slider__control.right',
-                prevEl: '.compare-slider__control.left',
-            },
-            pagination: {
-                el: '.compare-slider__nav-container',
-                clickable: true,
-            },
-            on:{
-                slideChange: (e)=>{
-                    updatePaginationBackgrounds()
-                }
-            } 
+    if (document.querySelector('.compare_laser')) {
+        const imagesArray = ['compare-slider-laser-1.1.png', 'compare-slider-laser-1.2.png',
+            'compare-slider-massage-1.1.png', 'compare-slider-massage-1.2.png',
+            'first-image.png', 'second-image.png',
+            'service (1).png', 'service (2).png',
+            'service (3).png', 'service (4).png',
+            'service (5).png', 'service (6).png']
+
+        const slider = new CompareSlider('.compare-slider', {
+            slideSelector: '.compare-slide',
+            imagesArray: imagesArray
         })
-        
-        function updatePaginationBackgrounds(){
-            const bullets = slider.pagination.bullets;
-            const activeIndex = slider.activeIndex;
-            console.log(bullets);
-            
-            bullets.forEach((bullet, index) => {
-                bullet.classList.remove('passed', 'current', 'upcoming');
-    
-                if (index < activeIndex) {
-                    bullet.classList.add('passed');
-                } else if (index === activeIndex) {
-                    // bullet.innerHTML = '<div class="swiper-pagination-bullet-fill"></div>'
-                    // bgFillElem = bullet.querySelector('.swiper-pagination-bullet-fill')
-                    // bgFillElem.style.width = bullet.getBoundingClientRect().width + 'px'
-                    
-                } else {
-                    bullet.classList.add('upcoming');
-                }
-            });
-        }
+    }
+    if (document.querySelector('.compare_massage')) {
+        const imagesArray = [
+            'compare-slider-massage-1.1.png', 'compare-slider-massage-1.2.png',
+            'service (1).png', 'service (2).png',
+            'service (3).png', 'service (4).png',
+            'first-image.png', 'second-image.png',
+            'compare-slider-laser-1.1.png', 'compare-slider-laser-1.2.png',
+            'service (5).png', 'service (6).png']
+
+        const slider = new CompareSlider('.compare-slider', {
+            slideSelector: '.compare-slide',
+            imagesArray: imagesArray
+        })
     }
 }
 
@@ -538,7 +748,7 @@ function advicesSectionInit() {
         }
     }
 }
-function priceListPageInit(){
+function priceListPageInit() {
     if (document.querySelectorAll('.price-list-content').length > 0) {
         let accordeonClass = new Accordion('.price-list-item', {
             bodySelector: '.price-list-item__body',

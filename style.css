@@ -2404,8 +2404,11 @@ html ::selection {
   position: relative;
   overflow: hidden;
 }
-.compare-slider-container{
+.compare-slider-wrapper{
   width: 110rem;
+  height: 40rem;
+  display: flex;
+  flex-flow: column;
   overflow: hidden;
 }
 .compare-slide{
@@ -2418,7 +2421,8 @@ html ::selection {
   object-fit: cover;
   object-position: center center;
 }
-.control-arrow{
+
+/* .control-arrow{
   width: 6.4rem;
   height: 6.4rem;
   position: absolute;
@@ -2444,40 +2448,40 @@ html ::selection {
 .compare-slider__control.left{
   left: 0;
   transform: translate(-50%, -50%) rotateZ(180deg);
-}
+}*/
 .compare-slider__nav-container{
   margin-top: 3rem;
   display: flex;
+  gap: 1rem;
   justify-content: center;
 }
-.compare-slider__nav-container .swiper-pagination-bullet{
+.compare-slider__nav{
   width: 4rem;
   height: 1rem;
   border-radius: .5rem;
   border: var(--green-600) .1rem solid;
-  background: 0;
-  opacity: 1;
-  transition: flex-grow 0.5s;
+  transition: flex-grow 0.5s, background-color 0.1s;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
-.compare-slider__nav-container .swiper-pagination-bullet-active{
+.compare-slider__nav.active{
   flex-grow: 1;
   cursor: default;
   pointer-events: none;
 }
-.compare-slider__nav-container .swiper-pagination-bullet.passed{
+.compare-slider__nav.passed{
   background-color: var(--green-600);
 }
-.swiper-pagination-bullet-fill{
+.compare-slider__nav-fill{
   position: absolute;
   left: 0;
-  width: 40rem;
+  width: var(--active-nav-btn-width);
   flex-grow: 1;
   height: 1rem;
   background-color: var(--green-600);
-
-}
+  transform: translate(-100%, 0);
+} 
 @media only screen and (orientation: portrait) {
   .compare{
     padding-top: 20rem;
@@ -2505,6 +2509,12 @@ html ::selection {
     display: none;
   }
   .compare-slider__nav-container .swiper-pagination-bullet{
+    width: 1rem;
+  }
+  .compare-slider-wrapper{
+    height: 12.4rem;
+  }
+  .compare-slider__nav{
     width: 1rem;
   }
 }
