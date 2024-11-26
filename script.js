@@ -35,6 +35,7 @@ function refreshAllAnimations({
     });
 }
 
+// класс для возможности переиспользования элемента слайдера до/после
 class CompareSlider {
     constructor(selector, options = {}) {
         this.slider = document.querySelector(selector)
@@ -246,15 +247,15 @@ class CompareSlider {
 
         fillElem.currentAnimation = gsap.fromTo(
             fillElem,
-            { x: '-100%' },{
-                x: '0',
-                duration: this.options.slideInterval / 1000,
-                ease: "none",
-                onComplete: () => {
-                    gsap.set(fillElem, { x: '-100%' });
-                    fillElem.currentAnimation = null;
-                }
+            { x: '-100%' }, {
+            x: '0',
+            duration: this.options.slideInterval / 1000,
+            ease: "none",
+            onComplete: () => {
+                gsap.set(fillElem, { x: '-100%' });
+                fillElem.currentAnimation = null;
             }
+        }
         );
     }
 }
@@ -486,6 +487,21 @@ function detailsInit({
     })
 }
 
+// функцию можно переиспользовать, соблюдая структуру вложенности классов и задавая slider
+function sliderIndicatorInit(slider) {
+    let slidesQuantity = slider.slides.length
+    let indicatorFullWidth = remToPx(34);
+    let sliderBlock = slider.el
+    let sliderIndicator = sliderBlock.parentElement.querySelector('.slider-indicator')
+    let sliderIndicatorBar = sliderIndicator.querySelector('.slider-indicator__bar')
+    let sliderIndicatorWidth = indicatorFullWidth / slidesQuantity
+    sliderIndicatorBar.style.width = sliderIndicatorWidth + 'px'
+
+    slider.on('slideChange', (e) => {
+        gsap.timeline().to(sliderIndicatorBar, { x: sliderIndicatorWidth * e.activeIndex })
+    });
+}
+
 document.addEventListener("DOMContentLoaded", (event) => {
 
 
@@ -505,6 +521,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     fixedTextAnimation()
     iconBtnAnimation()
     serviceSectionInit()
+    expertsSectionInit()
     ourAdvantagesAnimation()
     yandexMapsInit()
     currentYearInit()
@@ -833,9 +850,10 @@ function udsAnimation() {
 function equipmentAnimation() {
     let headerHeight = remToPx(10.6)
     let centerOffset = ((((winHeight - headerHeight) - remToPx(80)) / 2) + headerHeight)
-    if (document.querySelectorAll('.equipment').length > 0) {
+    let equipmentSections = document.querySelectorAll('.equipment.equipment-animation')
+    if (equipmentSections.length > 0) {
         if (isDesktop) {
-            document.querySelectorAll('.equipment').forEach(section => {
+            equipmentSections.forEach(section => {
                 let image = section.querySelector('.equipment-image')
                 let containerHeight = section.querySelector('.equipment-info').getBoundingClientRect().height - remToPx(45)
                 gsap.timeline({
@@ -974,6 +992,31 @@ function preloadImages(imageArray) {
 
 }
 
+function expertsSectionInit() {
+    function expertsSliderInit() {
+        const slider = new Swiper('.experts-slider', {
+            slidesPerView: 'auto',
+            speed: 700,
+        })
+        sliderIndicatorInit(slider)
+
+        slider.on('slideChange', (e) => {
+            console.log(e);
+            
+            if(e.activeIndex == slider.slides.length - 1){
+                slider.el.classList.add('last-slide')              
+            } else {
+                slider.el.classList.remove('last-slide')              
+            }
+        });
+    }
+    if (document.querySelector('.experts-slider')) {
+        if (isMobile) {
+            expertsSliderInit()
+        }
+    }
+}
+
 function fixedImageAnimation() {
     if (isMobile) {
         const imagesToPreload = ["first-image.png", "second-image.png", "third-image.png"];
@@ -1030,10 +1073,11 @@ function setElementFixed(selector, selfRelativeScrolls) {
 }
 function serviceSectionInit() {
     function servicesSliderInit() {
-        const swiper = new Swiper('.services-slider', {
+        const slider = new Swiper('.services-slider', {
             slidesPerView: 'auto',
             speed: 700,
         })
+        sliderIndicatorInit(slider)
     }
     function servicesAnimationInit() {
         let tl2 = gsap.timeline({
@@ -1054,9 +1098,11 @@ function serviceSectionInit() {
         })
     }
     if (document.querySelector('.services-slider')) {
-        servicesSliderInit()
+        if (isMobile) {
+            servicesSliderInit()
+        }
         if (isDesktop) {
-            servicesAnimationInit()
+            // servicesAnimationInit()
         }
     }
 }
@@ -1072,34 +1118,55 @@ function faqInit() {
 }
 
 function iconBtnAnimation() {
-    if (isDesktop) {
-        document.querySelectorAll('.icon-btn').forEach(btn => {
-            let icon = btn.querySelector('.icon-btn__icon');
-            let background = btn.querySelector('.icon-btn__bg');
-            let text = btn.querySelector('.icon-btn__text');
+    document.querySelectorAll('.icon-btn').forEach(btn => {
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: btn, 
+                onEnter: () => {
+                    let icon = btn.querySelector('.icon-btn__icon');
+                    let background = btn.querySelector('.icon-btn__bg');
+                    let text = btn.querySelector('.icon-btn__text');
+                    tl = gsap.timeline().to(icon, {
+                        x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
+                    }, 0)
+                        .to(icon, { opacity: 0, duration: 0.05 }, 1)
+                        .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
+                        .to(text, { color: 'var(--white)', duration: 0.1 }, 1)
+                        .to(background, { width: (btn.clientWidth + 'px'), duration: 0.1 }, 0)
 
-            let tl = gsap.timeline()
-            btn.addEventListener('mouseenter', throttle(() => {
-                tl.killTweensOf(background)
-
-                tl = gsap.timeline().to(icon, {
-                    x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
-                }, 0)
-                    .to(icon, { opacity: 0, duration: 0.05 }, 1)
-                    .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
-                    .to(text, { color: 'var(--white)', duration: 0.1 }, 1)
-                    .to(background, { width: (btn.clientWidth + 'px'), duration: 0.1 }, 0)
-            }, 1200))
-
-            btn.addEventListener('mouseout', throttle(() => {
-                tl.kill()
-                tl = gsap.timeline().to(icon, { x: 0, rotate: 0, scale: 1, duration: 1, ease: "slow(0.7,0.7,false)" }, 0)
-                    .to(icon, { opacity: 1, duration: 0.01 }, 0)
-                    .to(background, { opacity: 0, scale: 0, transformOrigin: 'right', duration: 0.3 }, 0)
-                    .to(text, { color: 'var(--green-900)', duration: 0.1 }, 0)
-            }, 1200))
+                },
+                once: true,
+            }
         })
-    }
+    })
+    // if (isDesktop) {
+    //     document.querySelectorAll('.icon-btn').forEach(btn => {
+    //         let icon = btn.querySelector('.icon-btn__icon');
+    //         let background = btn.querySelector('.icon-btn__bg');
+    //         let text = btn.querySelector('.icon-btn__text');
+
+    //         let tl = gsap.timeline()
+    //         btn.addEventListener('mouseenter', throttle(() => {
+    //             tl.killTweensOf(background)
+
+    //             tl = gsap.timeline().to(icon, {
+    //                 x: (btn.clientWidth - remToPx(4)), scale: 0.8, duration: 1, rotate: '540deg', ease: "slow(0.7,0.7,false)"
+    //             }, 0)
+    //                 .to(icon, { opacity: 0, duration: 0.05 }, 1)
+    //                 .fromTo(background, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, transformOrigin: 'right', duration: 0.3 }, 1)
+    //                 .to(text, { color: 'var(--white)', duration: 0.1 }, 1)
+    //                 .to(background, { width: (btn.clientWidth + 'px'), duration: 0.1 }, 0)
+    //         }, 1200))
+
+    //         btn.addEventListener('mouseout', throttle(() => {
+    //             tl.kill()
+    //             tl = gsap.timeline().to(icon, { x: 0, rotate: 0, scale: 1, duration: 1, ease: "slow(0.7,0.7,false)" }, 0)
+    //                 .to(icon, { opacity: 1, duration: 0.01 }, 0)
+    //                 .to(background, { opacity: 0, scale: 0, transformOrigin: 'right', duration: 0.3 }, 0)
+    //                 .to(text, { color: 'var(--green-900)', duration: 0.1 }, 0)
+    //         }, 1200))
+    //     })
+    // }
 }
 
 function yandexMapsInit() {
