@@ -323,6 +323,15 @@ html ::selection {
   right: 0;
   z-index: 2;
 }
+.fixed-video::-webkit-media-controls,
+.fixed-video::-webkit-media-controls-start-playback-button,
+.fixed-video::-webkit-media-controls-play-button,
+.fixed-video::-webkit-media-controls-panel {
+	display: none !important;
+	-webkit-appearance: none;
+    opacity: 0;
+    visibility: hidden;
+}
 .main-text-container {
   position: absolute;
   width: 100vw;
@@ -1103,6 +1112,7 @@ html ::selection {
   display: flex;
   gap: 1.5rem;
   align-items: end;
+  height: 13.8rem;
 }
 .footer-text-logo {
   width: 10.4rem;
@@ -1144,6 +1154,7 @@ html ::selection {
 }
 .footer-bottom-row {
   display: flex;
+  align-items: center;
 }
 .footer-bottom-info {
   font-size: 1.2rem;
