@@ -170,9 +170,13 @@ html ::selection {
   line-height: 1;
   letter-spacing: 0.02em;
   color: var(--green-900);
+  width: fit-content;
 }
 .breadcrumb-text {
   opacity: 0.5;
+}
+.mobile__breadcrumbs{
+  display: none;  
 }
 /* БЭМ блоки конец */
 
@@ -254,6 +258,13 @@ html ::selection {
   padding: 0 3rem;
   opacity: 0;
   z-index: 1;
+  transition: background-color 0.3s;
+}
+.icon-btn_small .icon-btn__bg{
+  height: 4.8rem;
+}
+.icon-btn:hover .icon-btn__bg{
+  background-color: #c03c43;
 }
 .icon-btn__text {
   position: relative;
@@ -263,8 +274,13 @@ html ::selection {
   letter-spacing: 0.02em;
   padding: 2rem 3rem;
   text-align: center;
-
+  
   transition: color 0.5s;
+}
+.icon-btn_small .icon-btn__text{
+  font-size: 1.6rem;
+  padding-top: 1.6rem;
+  padding-bottom: 1.6rem;
 }
 @media only screen and (orientation: portrait) {
   .icon-btn__text {
@@ -441,7 +457,7 @@ html ::selection {
 }
 
 .services-slider {
-  margin-top: 20rem;
+  margin-top: 10rem;
 }
 .services-slider__wrapper {
   display: flex;
@@ -589,23 +605,22 @@ html ::selection {
   color: var(--green-900);
 
   transition: height 0.2s, background-color 0.2s, color 0.2s;
-  &:hover {
-    color: var(--white);
-    .price-list-item__icon {
-      color: var(--white);
-    }
-  }
-  &.active {
-    background-color: var(--green-600);
-    color: var(--white);
-
-    .price-list-item__body {
-      opacity: 1;
-    }
-    .price-list-item__icon {
-      color: var(--white);
-    }
-  }
+}
+.price-list-item:hover {
+  color: var(--white);
+}
+.price-list-item:hover .price-list-item__icon{
+  color: var(--white);
+}
+.price-list-item.active{
+  background-color: var(--green-600);
+  color: var(--white);
+}
+.price-list-item.active .price-list-item__body {
+  opacity: 1;
+}
+.price-list-item.active .price-list-item__icon {
+  color: var(--white);
 }
 .price-list-item__title {
   position: relative;
@@ -1228,14 +1243,22 @@ html ::selection {
     display: none;
   }
   .header__background {
-    height: 11rem;
+    height: 9rem;
   }
   .header__container {
-    padding: 4rem 0;
-    height: 11rem;
+    padding: 3rem 0;
+    height: 9rem;
   }
   .header__breadcrumbs {
     display: none;
+  }
+  .mobile__breadcrumbs{
+    display: flex;
+    position: relative;
+    z-index: 2;
+    top: 10rem;
+    left: 50%;
+    transform: translate(-50%);
   }
   .logo {
     width: 12.4rem;
@@ -1337,6 +1360,15 @@ html ::selection {
     font-size: 1.8rem;
     line-height: 1;
     gap: 5rem;
+  }
+  .price-list-item:hover {
+    color: var(--green-900);
+  }
+  .price-list-item:hover .price-list-item__icon{
+    color: var(--green-600);
+  }
+  .price-list-item.active .price-list-item__icon {
+    color: var(--white);
   }
   .price-list__title {
     font-size: 4rem;
@@ -1536,9 +1568,10 @@ html ::selection {
   .services__title {
     font-size: 4rem;
     line-height: 1;
+    text-align: left;
   }
   .services-slider {
-    margin-top: 10rem;
+    margin-top: 4rem;
     margin-left: 1rem;
     margin-right: 4rem;
   }
@@ -1580,7 +1613,7 @@ html ::selection {
   /* адреса */
   .addresses-list__wrapper {
     flex-flow: column;
-    margin-top: 10rem;
+    margin-top: 5rem;
     gap: 6rem;
   }
   .address-title {
@@ -1607,6 +1640,9 @@ html ::selection {
     width: unset;
     padding-bottom: 3.6rem;
   }
+  .footer-container{
+    position: unset;
+  }
   .footer-separator {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -1623,6 +1659,9 @@ html ::selection {
   }
   .footer-text-logo {
     width: 7.8rem;
+    height: 10.4rem;
+  }
+  .footer-logo-container{
     height: 10.4rem;
   }
   .footer__logo {
@@ -1646,11 +1685,8 @@ html ::selection {
   .footer__company-info-text {
     width: unset;
   }
-  .footer__dev-info-link {
-  }
   .footer-bottom-info {
     justify-content: start;
-    /* text-align: center; */
     margin-top: 0;
   }
   /* футер конец */
@@ -1669,12 +1705,12 @@ html ::selection {
   display: flex;
   flex-flow: column;
   gap: 13rem;
-  margin-top: 8rem;
+  margin-top: 10rem;
 }
 .price-list-section {
   display: flex;
   flex-flow: column;
-  gap: 6rem;
+  gap: 5rem;
 }
 .price-list-section__title {
   font-size: 4rem;
@@ -1682,6 +1718,11 @@ html ::selection {
   color: var(--green-600);
 }
 .price-list-section-text-container {
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.price-list-section__actions-wrapper{
   display: flex;
   flex-flow: column;
   gap: 3rem;
@@ -1694,12 +1735,13 @@ html ::selection {
 /* UDS */
 .UDS {
   position: relative;
-  padding-top: 50rem;
+  padding-top: 30rem;
 }
 .UDS-content-wrapper {
+  margin-top: 10rem;
   display: flex;
-  gap: 25rem;
-  align-items: center;
+  gap: 20rem;
+  justify-content: center;
 }
 .UDS-text {
   width: 70rem;
@@ -1719,36 +1761,19 @@ html ::selection {
   color: var(--green-600);
 }
 .UDS-content {
-  margin-left: 80rem;
   display: flex;
   flex-flow: column;
   gap: 5rem;
 }
 .UDS-secondary-title {
-  font-size: 2.4rem;
-  line-height: 1.4;
+  font-size: 3.2rem;
+  line-height: 1;
   letter-spacing: 0.02em;
   width: 70rem;
 }
-.UDS-text-wrapper {
-  display: flex;
-  flex-flow: column;
-  gap: 2rem;
-}
-.UDS-text-wrapper_small-gap {
-  display: flex;
-  flex-flow: column;
-  gap: 1rem;
-}
-.UDS-text-wrapper_without-gap {
-  gap: 0;
-}
 .UDS-mockup {
   width: 30rem;
-  height: 93rem;
-  position: absolute;
-  top: 10rem;
-  left: 25rem;
+  height: 62rem;
 }
 .UDS-mockup-container {
   position: relative;
@@ -1795,6 +1820,49 @@ html ::selection {
   margin-top: 14.3rem;
   cursor: pointer;
 }
+.UDS-text-wrapper{
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.UDS-status-badge{
+  width: 20rem;
+  padding: 3rem 0;
+  background-color: var(--green-600);
+  color: var(--white);
+  
+  font-size: 1.6rem;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 3rem 8rem 0 3rem;
+}
+.UDS-status-badge_opacity20{
+  background-color: rgba(122, 128, 74, .2);
+}
+.UDS-status-badge_opacity40{
+  background-color: rgba(122, 128, 74, .4);
+}
+.UDS-status-badge_opacity60{
+  background-color: rgba(122, 128, 74, .6);
+}
+.UDS-status-badge_opacity80{
+  background-color: rgba(122, 128, 74, .8);
+}
+.UDS-status{
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.UDS-status__desc{
+  font-size: 2rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.UDS-statuses-list{
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
 @media only screen and (orientation: portrait) {
   .price-list-page {
     margin-top: 20rem;
@@ -1814,19 +1882,15 @@ html ::selection {
   .UDS {
     padding-top: 20rem;
   }
+  .UDS-title{
+    font-size: 3.2rem;
+  }
   .UDS-content-wrapper {
     flex-flow: column-reverse;
     gap: 10rem;
   }
   .UDS-mockup {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 62rem;
-  }
-  .UDS-content {
-    margin-left: 0;
-    padding: 0 1rem;
+    align-self: center;
   }
   .UDS-text {
     width: unset;
@@ -1834,38 +1898,47 @@ html ::selection {
   .UDS-secondary-title {
     width: unset;
   }
+  .UDS-statuses-list{
+    gap: 3rem;
+  }
+  .UDS-status{
+    flex-flow: column;
+    gap: 1rem;
+  }
+  .UDS-status__desc{
+    text-align: center;
+  }
 }
 /* UDS конец */
 /* Страница прайс листа */
 
 /* Страница контактов */
-.addresses-page-text-container {
+.addresses-list-title-container {
   margin-top: 4rem;
   display: flex;
   flex-flow: column;
-  gap: 8rem;
+  gap: 5rem;
 }
-.addresses-page-title {
-  font-weight: 300;
-  font-size: 6rem;
+.addresses-list-title {
+  font-size: 4rem;
   line-height: 1;
   color: var(--green-600);
 }
-.addresses-page-text {
+.addresses-list-title-footer {
   font-size: 2rem;
   line-height: 1.4;
   letter-spacing: 0.02em;
   width: 60rem;
 }
 @media only screen and (orientation: portrait) {
-  .addresses-page-title {
+  .addresses-list-title {
     font-size: 4rem;
   }
-  .addresses-page-text {
+  .addresses-list-title-footer {
     width: unset;
     font-size: 1.6rem;
   }
-  .addresses-page-text-container {
+  .addresses-list-title-container {
     margin-top: 0;
   }
 }
@@ -2276,6 +2349,7 @@ html ::selection {
   background-color: var(--green-600);
   color: var(--white);
   position: relative;
+  border-radius: 5rem 10rem 0 10rem;
 }
 .review ::selection {
   background-color: var(--white);
@@ -2324,12 +2398,13 @@ html ::selection {
   height: 1.6rem;
 }
 .review__text {
-  font-size: 2rem;
+  font-size: 1.6rem;
   line-height: 1;
   letter-spacing: 0.02em;
 }
 .review__link {
   position: absolute;
+  right: 4rem;
   bottom: 4rem;
   font-size: 1.2rem;
   line-height: 1;
@@ -2926,6 +3001,129 @@ html ::selection {
 }
 /* Почему мы? */
 
+/* Скидки и бонусы */
+.bonuses-page-title{
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--green-600);
+  margin-bottom: 10rem;
+}
+.bonuses-section__title{
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--green-600);
+  margin-bottom: 6rem;
+}
+.bonuses-list{
+  display: flex;
+  flex-flow: wrap;
+  row-gap: 10rem;
+  column-gap: 6.7rem;
+}
+.bonus {
+  width: 32rem;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  gap: 5rem;
+  transition: gap 0.3s;
+}
+.bonus__img {
+  width: 30rem;
+  height: 30rem;
+  position: relative;
+  left: 0;
+  top: 2rem;
+  border-radius: 5rem 10rem 0 10rem;
+  transition: width 0.3s, height 0.3s, top 0.3s;
+}
+.bonus__title {
+  text-align: center;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--green-600);
+}
+.bonus-bg {
+  width: 31rem;
+  height: 31rem;
+  top: 0;
+  left: 1rem;
+  position: absolute;
+  background-color: var(--green-600);
+  opacity: 0.2;
+  border-radius: 5rem 10rem 0 10rem;
+}
+.bonus:hover {
+  gap: 3rem;
+}
+.bonus:hover .bonus__img {
+  width: 32rem;
+  height: 32rem;
+  top: 0;
+}
+
+
+.bonus-text-container{
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.bonus__text{
+  font-size: 1.6rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.bonus__action{
+  align-self: center;
+}
+.bonus-link{
+  background-color: var(--green-600);
+  border-radius: 5rem 10rem 0 10rem;
+  width: 32rem;
+  height: 32rem;
+  position: relative;
+}
+.bonus-link-text{
+  width: 22rem;
+  color: var(--white);
+  text-align: center;
+  
+  font-size: 2.4rem;
+  line-height: 1.4;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@media only screen and (orientation: portrait) {
+  .bonuses-page-title{
+    font-size: 4rem;
+  }
+  .bonus{
+    width: 34rem;
+  }
+  .bonus-bg{
+    width: 33rem;
+    height: 33rem;
+  }
+  .bonus__img{
+    width: 32rem;
+    height: 32rem;
+  }
+  .bonus:hover {
+    gap: 5rem;
+  }
+  .bonus:hover .bonus__img {
+    width: 32rem;
+    height: 32rem;
+    top: 2rem;
+  }
+}
+/* Скидки и акции */
+
+
+
 .fade-in-scroll {
   opacity: 0;
   transition: opacity 0.3s;
@@ -3005,8 +3203,23 @@ html ::selection {
   padding-left: 0;
   padding-right: 0;
 }
+.text-center{
+  text-align: center;
+}
 .half-opacity {
   opacity: 0.5;
+}
+.opacity20{
+  opacity: 0.2;
+}
+.opacity40{
+  opacity: 0.4;
+}
+.opacity60{
+  opacity: 0.6;
+}
+.opacity80{
+  opacity: 0.8;
 }
 
 .white-space-small {
@@ -3075,6 +3288,9 @@ html ::selection {
   }
   .fz-24 {
     font-size: 2.4rem;
+  }
+  .text-center-mob{
+    text-align: center;
   }
 }
 /* БЭМ-блоки конец */

@@ -527,7 +527,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     currentYearInit()
     footerAnimation()
     fixedImageAnimation()
-    udsAnimation()
+    // udsAnimation()
     fadeInScrollAnimation()
 });
 
@@ -1240,22 +1240,21 @@ function currentYearInit() {
 }
 
 function footerAnimation() {
-    let footer = document.querySelector('.footer');
-    let container = document.querySelector('.footer-container');
-    footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
-    let startPosition = isMobile ? 'top top' : 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
-    let containerStartYPosition = isMobile ? 0 : '-100%'
-    gsap.timeline({
-        scrollTrigger: {
-            trigger: container,
-            start: startPosition,
-            end: '+=' + container.getBoundingClientRect().height,
-            scrub: true,
-        }
-    }).fromTo(container, { y: containerStartYPosition }, { y: '0', ease: 'none' }, 0)
-    // if (isMobile) {
-    //     tl.fromTo('.header', { opacity: 1 }, { opacity: 0, ease: 'none' }, 0)
-    // }
+    if(isDesktop){
+        let footer = document.querySelector('.footer');
+        let container = document.querySelector('.footer-container');
+        footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'
+        let startPosition = 'top ' + (100 - (((footer.getBoundingClientRect().height) / winHeight) * 100)) + '%'
+        let containerStartYPosition = '-100%'
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: container,
+                start: startPosition,
+                end: '+=' + container.getBoundingClientRect().height,
+                scrub: true,
+            }
+        }).fromTo(container, { y: containerStartYPosition }, { y: '0', ease: 'none' }, 0)
+    }
 }
 
 // функция которая не позволяет выполнять повтроно вызываемую функцию раньше чем пройдет delay
