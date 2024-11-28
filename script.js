@@ -4,6 +4,7 @@ let winWidth
 let isMobile
 let isDesktop
 let fontSize
+const lenis = new Lenis()
 function varUpdateOnResize() {
     winHeight = document.querySelector('.mobileHeightRef').clientHeight;
     winWidth = visualViewport.width;
@@ -508,6 +509,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
     // functions calling:
     scrollPluginsInit()
     startAnimation()
+    burgerAnimation()
+    githubPagesLinks()
     imageGalleryAnimation()
     priceListSectionInit()
     priceListPageInit()
@@ -556,7 +559,7 @@ function scrollPluginsInit() {
     if (isDesktop) {
         ScrollTrigger.refresh();
         // smooth scroll init
-        const lenis = new Lenis()
+
 
         lenis.on('scroll', ScrollTrigger.update)
 
@@ -569,6 +572,37 @@ function scrollPluginsInit() {
         ScrollTrigger.refresh();
     }
 }
+
+function burgerAnimation() {
+    document.querySelector('.burger-icon').addEventListener('click', clickHadler)
+    let menuEl = document.querySelector('.menu')
+    
+    function clickHadler() {
+        if (menuEl.classList.contains('active')) {
+            menuEl.classList.remove('active')
+            lenis.start()
+        } else {
+            menuEl.classList.add('active')
+            lenis.stop()
+        }
+    }
+}
+
+function githubPagesLinks() {
+    document.querySelectorAll('a').forEach(link => {
+        let currentHref = link.href
+        
+        let basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
+        if (currentHref.includes('html')) {
+            const url = new URL(currentHref);
+            const path = url.pathname;
+            
+            url.pathname = basePath + path.replace(/^\//, '');
+            link.href = url.toString();            
+        }
+    })
+}
+
 function startAnimation() {
     if (document.querySelector('.main-banner')) {
         if (isMobile) {
@@ -848,11 +882,11 @@ function udsAnimation() {
     }
 }
 function equipmentAnimation() {
-    let headerHeight = remToPx(10.6)
-    let centerOffset = ((((winHeight - headerHeight) - remToPx(80)) / 2) + headerHeight)
     let equipmentSections = document.querySelectorAll('.equipment.equipment-animation')
     if (equipmentSections.length > 0) {
         if (isDesktop) {
+            let headerHeight = remToPx(10.6)
+            let centerOffset = ((((winHeight - headerHeight) - remToPx(80)) / 2) + headerHeight)
             equipmentSections.forEach(section => {
                 let image = section.querySelector('.equipment-image')
                 let containerHeight = section.querySelector('.equipment-info').getBoundingClientRect().height - remToPx(45)
@@ -1002,11 +1036,11 @@ function expertsSectionInit() {
 
         slider.on('slideChange', (e) => {
             console.log(e);
-            
-            if(e.activeIndex == slider.slides.length - 1){
-                slider.el.classList.add('last-slide')              
+
+            if (e.activeIndex == slider.slides.length - 1) {
+                slider.el.classList.add('last-slide')
             } else {
-                slider.el.classList.remove('last-slide')              
+                slider.el.classList.remove('last-slide')
             }
         });
     }
@@ -1121,7 +1155,7 @@ function iconBtnAnimation() {
     document.querySelectorAll('.icon-btn').forEach(btn => {
         gsap.timeline({
             scrollTrigger: {
-                trigger: btn, 
+                trigger: btn,
                 onEnter: () => {
                     let icon = btn.querySelector('.icon-btn__icon');
                     let background = btn.querySelector('.icon-btn__bg');
@@ -1240,7 +1274,7 @@ function currentYearInit() {
 }
 
 function footerAnimation() {
-    if(isDesktop){
+    if (isDesktop) {
         let footer = document.querySelector('.footer');
         let container = document.querySelector('.footer-container');
         footer.style.height = container.getBoundingClientRect().height + remToPx(5) + 'px'

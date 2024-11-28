@@ -100,6 +100,10 @@ html ::selection {
   background-color: var(--green-600);
   color: #fff;
 }
+html:has(.menu.active){
+  overflow: hidden;
+  /* pointer-events: none; */
+}
 
 @media only screen and (orientation: portrait) {
   html {
@@ -225,9 +229,39 @@ html ::selection {
 }
 /* Хедер конец */
 
+
+/* бургер + меню */
 .burger-btn {
   display: none;
 }
+.menu{
+  position: fixed;
+  z-index: 9;
+  width: 100%;
+  min-height: 100vw;
+  background-color: var(--green-100);
+
+  padding: 20rem 0 0 5rem;
+
+  transform: translate(0, -100%);
+  transition: transform 0.5s;
+}
+.menu.active{
+  transform: translate(0, 0);
+}
+.menu-list{
+  display: flex;
+  flex-flow: column;
+  gap: 3rem;
+}
+.menu-item{
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  
+}
+
+/* бургер + меню */
 
 /* главный баннер */
 .main-banner {
