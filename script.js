@@ -4,7 +4,6 @@ let winWidth
 let isMobile
 let isDesktop
 let fontSize
-const lenis = new Lenis()
 function varUpdateOnResize() {
     winHeight = document.querySelector('.mobileHeightRef').clientHeight;
     winWidth = visualViewport.width;
@@ -14,6 +13,9 @@ function varUpdateOnResize() {
 }
 varUpdateOnResize();
 visualViewport.addEventListener('resize', varUpdateOnResize);
+
+// Включаем lenis если мы на пк
+const lenis = isDesktop ? new Lenis() : undefined;
 
 // переводит ремы в пиксели
 function remToPx(rem) {
@@ -574,16 +576,55 @@ function scrollPluginsInit() {
 }
 
 function burgerAnimation() {
-    document.querySelector('.burger-icon').addEventListener('click', clickHadler)
+    document.querySelector('.header__burger').addEventListener('click', clickHadler)
+    document.querySelector('.mob-burger-btn').addEventListener('click', clickHadler)
     let menuEl = document.querySelector('.menu')
     
-    function clickHadler() {
+    function clickHadler(e) {
+        let burgerEl        
+        if (e.target.tagName === 'svg' && e.target.classList.contains('burger-icon')) {
+            burgerEl = e.target;            
+        } else if (e.target.tagName === 'svg') {
+            burgerEl = e.target.closest('.mob-burger-btn').querySelector('svg.burger-icon');
+        } else if (e.target.tagName === 'path'){
+            burgerEl = e.target.closest('svg').parentElement.querySelector('svg.burger-icon');
+        } else if (e.target.tagName === 'rect'){
+            burgerEl = e.target.closest('.burger-icon')
+        }
+        
         if (menuEl.classList.contains('active')) {
             menuEl.classList.remove('active')
-            lenis.start()
+            toggleBurgerState(burgerEl, 'close');
+            if (lenis) lenis.start()
         } else {
             menuEl.classList.add('active')
-            lenis.stop()
+            toggleBurgerState(burgerEl, 'open');
+            if (lenis) lenis.stop()
+        }
+    }
+    function toggleBurgerState(burgerEl, state) {
+        const timeline = gsap.timeline();
+        const burgerRectSelector = `.${[...burgerEl.classList].join('.')}`;
+        const rectSelectors = {
+            first: `${burgerRectSelector} .burger-icon__rect_first`,
+            second: `${burgerRectSelector} .burger-icon__rect_second`,
+            third: `${burgerRectSelector} .burger-icon__rect_third`,
+        };
+
+        if (state === 'open') {
+            timeline
+                .to(rectSelectors.first, { y: isMobile ? '1200%' : '400%', duration: 0.25 }, 0)
+                .to(rectSelectors.second, { opacity: 0, duration: 0.25 }, 0)
+                .to(rectSelectors.third, { y: isMobile ? '-1200%' : '-400%', duration: 0.25 }, 0)
+                .to(rectSelectors.first, { rotate: 45, transformOrigin: 'center', duration: 0.25 }, 0.25)
+                .to(rectSelectors.third, { rotate: -45, transformOrigin: 'center', duration: 0.25 }, 0.25);
+        } else {
+            timeline
+                .to(rectSelectors.first, { rotate: 0, transformOrigin: 'center', duration: 0.25 }, 0)
+                .to(rectSelectors.third, { rotate: 0, transformOrigin: 'center', duration: 0.25 }, 0)
+                .to(rectSelectors.first, { y: '-15%', duration: 0.25 }, 0.25)
+                .to(rectSelectors.second, { opacity: 1, duration: 0.25 }, 0.25)
+                .to(rectSelectors.third, { y: '15%', duration: 0.25 }, 0.25);
         }
     }
 }
