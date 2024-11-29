@@ -15,6 +15,7 @@ varUpdateOnResize();
 visualViewport.addEventListener('resize', varUpdateOnResize);
 
 // Включаем lenis если мы на пк
+// smooth scroll init
 const lenis = isDesktop ? new Lenis() : undefined;
 
 // переводит ремы в пиксели
@@ -560,9 +561,6 @@ function scrollPluginsInit() {
     gsap.registerPlugin(ScrollTrigger);
     if (isDesktop) {
         ScrollTrigger.refresh();
-        // smooth scroll init
-
-
         lenis.on('scroll', ScrollTrigger.update)
 
         gsap.ticker.add((time) => {

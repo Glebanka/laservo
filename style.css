@@ -146,6 +146,12 @@ html:has(.menu.active){
   color: var(--green-600);
   text-align: center;
 }
+.basic-title_small {
+  font-size: 4rem;
+}
+.basic-title_left {
+  text-align: left;
+}
 .basic-title-footer {
   width: 60rem;
   letter-spacing: 0.02em;
@@ -164,6 +170,9 @@ html:has(.menu.active){
   .basic-title-footer {
     font-size: 1.6rem;
     width: unset;
+  }
+  .basic-title_left-mob {
+    text-align: left;
   }
 }
 
@@ -645,10 +654,16 @@ html:has(.menu.active){
   line-height: 1.2;
   text-transform: uppercase;
 }
+
 .services-slider-container {
   display: flex;
   flex-flow: column;
   gap: 4rem;
+}
+.services__title {
+  font-size: 4rem;
+  line-height: 1;
+  text-align: left;
 }
 .service-bg {
   width: 31rem;
@@ -1565,6 +1580,9 @@ html:has(.menu.active){
     font-size: 1.2rem;
     line-height: 1.2;
   }
+  .price-list-section__title_center-align-mob{
+    text-align: center;
+  }
   .tabs-container {
     width: 100%;
     padding: 2rem 1rem;
@@ -2147,20 +2165,22 @@ html:has(.menu.active){
   gap: 20rem;
 }
 .equipment-wrapper_big-gap {
-  gap: 54rem;
+  gap: 30rem;
 }
 .equipment {
   display: flex;
   gap: 12.5rem;
   justify-content: center;
   position: relative;
-  align-items: center;
 }
 .equipment.equipment-animation {
   align-items: unset;
 }
 .equipment_massage {
   gap: 2.5rem;
+}
+.equipment_centered{
+  align-items: center;
 }
 .equipment_pad-top {
   padding-top: 35rem;
@@ -2215,13 +2235,17 @@ html:has(.menu.active){
 }
 .equipment-certificate {
   display: flex;
-  align-items: center;
   gap: 2rem;
 }
 .equipment-certificate__img {
   width: 5rem;
   height: 6rem;
   flex-shrink: 0;
+}
+.equipment-certificate__img_tuv{
+  width: 5rem;
+  height: 5rem;
+  
 }
 .equipment-ceritificate__name {
   font-size: 1.6rem;
@@ -2507,7 +2531,6 @@ html:has(.menu.active){
   padding-top: 30rem;
 }
 .reviews-section__title {
-  text-align: center;
   font-size: 4rem;
   line-height: 1;
   color: var(--green-600);
@@ -2842,7 +2865,7 @@ html:has(.menu.active){
   padding-top: 30rem;
   display: flex;
   flex-flow: column;
-  gap: 20rem;
+  gap: 10rem;
 }
 .promo-equipment__title {
   color: var(--green-600);
@@ -2888,6 +2911,7 @@ html:has(.menu.active){
 .compare-slider {
   position: relative;
   overflow: hidden;
+  border-radius: 10rem;
 }
 .compare-slider-wrapper {
   width: 110rem;
@@ -3447,21 +3471,14 @@ html:has(.menu.active){
   gap: 1rem;
   margin-top: 1rem;
 }
-.article__list_markered{
-
+.article__list_ordered .article__item{
+  margin-left: 2.4rem;
 }
-.article__list_ordered{
-  
-}
-.article__item{
-  font-size: 2rem;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  margin-left: 5rem;
-  position: relative;
+.article__list_markered .article__item{
   list-style: none;
+  margin-left: 5rem;
 }
-.article__item::before{
+.article__list_markered .article__item::before{
   position: absolute;
   top: 1.4rem;
   left: -5rem;
@@ -3469,6 +3486,12 @@ html:has(.menu.active){
   width: 3rem;
   height: 0.2rem;
   background: var(--green-900);
+}
+.article__item{
+  font-size: 2rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  position: relative;
 }
 .article__action{
   align-self: center;
