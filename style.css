@@ -119,6 +119,7 @@ html:has(.menu.active){
   padding: 1.5rem 3rem;
   border-radius: 123px;
   transition: background-color 0.3s;
+  display: block;
 }
 .btn:hover {
   background-color: #c03c43;
@@ -348,7 +349,7 @@ html:has(.menu.active){
     overflow: scroll;
   }
   .menu-action{
-    bottom: 101vh;
+    bottom: 111vh;
     left: 2rem;
     position: fixed;
     z-index: 9;
@@ -776,7 +777,7 @@ html:has(.menu.active){
 
   color: var(--green-900);
 
-  transition: height 0.2s, background-color 0.2s, color 0.2s;
+  transition: height 0.4s, background-color 0.4s, color 0.4s;
 }
 .price-list-item:hover {
   color: var(--white);
@@ -1773,7 +1774,7 @@ html:has(.menu.active){
   }
   .services-slider {
     margin-top: 4rem;
-    margin-right: 3rem;
+    margin-right: 2rem;
   }
   .services-slider__wrapper {
     flex-flow: row;
@@ -2027,7 +2028,7 @@ html:has(.menu.active){
 }
 .UDS-status-badge{
   width: 20rem;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background-color: var(--green-600);
   color: var(--white);
   
@@ -2397,7 +2398,12 @@ html:has(.menu.active){
 
   color: var(--green-900);
 
-  transition: height 0.2s, background-color 0.2s, color 0.2s;
+  transition: height 0.4s, background-color 0.4s, color 0.4s;
+}
+.accordion:hover ::selection,
+.accordion.active ::selection {
+  color: var(--green-600);
+  background: var(--white);
 }
 .accordion:hover .accordion__icon {
   color: var(--white);
@@ -2604,8 +2610,11 @@ html:has(.menu.active){
 }
 .review__text {
   font-size: 1.6rem;
-  line-height: 1;
+  line-height: 1.4;
   letter-spacing: 0.02em;
+  height: 13.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .review__link {
   position: absolute;
@@ -2631,12 +2640,6 @@ html:has(.menu.active){
   .review__link {
     bottom: 3rem;
   }
-  .review__text {
-    font-size: 1.6rem;
-    line-height: 1.4;
-    height: 13.2rem;
-    overflow-y: hidden;
-  }
 }
 /* reviews-section */
 
@@ -2646,7 +2649,7 @@ html:has(.menu.active){
   padding-top: 24rem;
   display: flex;
   flex-flow: column;
-  gap: 10rem;
+  gap: 20rem;
   align-items: center;
 }
 .review-page-title-container {
@@ -2682,7 +2685,7 @@ html:has(.menu.active){
 }
 .reviews-content-wrapper {
   display: flex;
-  width: 300rem;
+  width: 320rem;
 }
 .reviews-wrapper {
   display: flex;
@@ -2690,6 +2693,8 @@ html:has(.menu.active){
   justify-content: center;
   gap: 2rem;
   width: 150rem;
+  margin-left: 5rem;
+  margin-right: 5rem;
   flex-shrink: 0;
 }
 .platform-tab__icon {
@@ -2737,8 +2742,13 @@ html:has(.menu.active){
     width: unset;
     font-size: 1.6rem;
   }
+  .reviews-content-wrapper {
+    width: 72rem;
+  }
   .reviews-wrapper {
     gap: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
   .review-place__title {
     font-size: 3.2rem;
@@ -2762,9 +2772,6 @@ html:has(.menu.active){
   }
   .review-place__rating-info {
     font-size: 1.6rem;
-  }
-  .reviews-content-wrapper {
-    width: 68rem;
   }
   .reviews-wrapper {
     width: 34rem;
@@ -2813,7 +2820,7 @@ html:has(.menu.active){
   gap: 2rem;
 }
 .details__text {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   letter-spacing: 0.02em;
   line-height: 1.4;
 }

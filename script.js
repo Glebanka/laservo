@@ -65,6 +65,7 @@ class CompareSlider {
         this.loadAndGroupImages();
         this.navButtonsInit();
         this.initVisibilityObserver();
+        this.initHoverStop();
     }
     initVisibilityObserver() {
         const observer = new IntersectionObserver(entries => {
@@ -117,6 +118,13 @@ class CompareSlider {
         };
 
         this.transitionAnimation();
+        // Запускаем новый интервал с сохранением его ID
+        this.slideIntervalId = setInterval(() => {
+            this.goToNextSlide();
+        }, this.options.slideInterval);
+    }
+    resumeSlideShow() {
+        this.goToNextSlide();
         // Запускаем новый интервал с сохранением его ID
         this.slideIntervalId = setInterval(() => {
             this.goToNextSlide();
@@ -237,6 +245,46 @@ class CompareSlider {
             }
         })
     }
+    initHoverStop() {
+        let resumeTimeout = null;
+
+        this.slider.addEventListener('pointerenter', (e) => {
+            const fillElem = this.findFillElem()
+            fillElem.currentAnimation.pause();
+            clearInterval(this.slideIntervalId); // Останавливаем, если элемент выходит из видимости
+            this.transitionAnimationTimeline.kill();
+
+            // Сбрасываем активный таймер, если он есть
+            if (resumeTimeout) {
+                clearTimeout(resumeTimeout);
+                resumeTimeout = null;
+            }
+        })
+        this.slider.addEventListener('pointerleave', (e) => {
+            const fillElem = this.findFillElem()
+            fillElem.currentAnimation.resume();
+
+            const timeLeft = Math.max(0, parseInt((fillElem.currentAnimation.duration() - fillElem.currentAnimation.time()) * 1000))
+            // Сбрасываем предыдущий таймер, если он существует
+            if (resumeTimeout) {
+                clearTimeout(resumeTimeout);
+            }
+
+            resumeTimeout = setTimeout(() => {
+                this.resumeSlideShow();
+            }, timeLeft);
+        })
+    }
+    findFillElem() {
+        const navBtn = this.findActiveNavBtn()
+
+        const fillElem = navBtn.querySelector('.compare-slider__nav-fill')
+
+        return fillElem
+    }
+    findActiveNavBtn() {
+        return Array.from(this.navBtns).find((btn, index) => index == this.currentSlideIndex)
+    }
     animateNavProgressBar(navBtn) {
         const fillElem = navBtn.querySelector('.compare-slider__nav-fill')
 
@@ -275,7 +323,6 @@ class Accordion {
             titleSelector: '.accordion__title',
             iconSelector: '.accordion__icon',
             activeClass: 'active',
-            animationDuration: 200,
             heightOffset: 7.2, // высота в rem для закрытого состояния
             resetBufferTime: 201, // Время буфера для обновления анимаций
             wrapperSelector: '.price-list-content-wrapper',
@@ -577,19 +624,19 @@ function burgerAnimation() {
     document.querySelector('.header__burger').addEventListener('click', clickHadler)
     document.querySelector('.mob-burger-btn').addEventListener('click', clickHadler)
     let menuEl = document.querySelector('.menu')
-    
+
     function clickHadler(e) {
-        let burgerEl        
+        let burgerEl
         if (e.target.tagName === 'svg' && e.target.classList.contains('burger-icon')) {
-            burgerEl = e.target;            
+            burgerEl = e.target;
         } else if (e.target.tagName === 'svg') {
             burgerEl = e.target.closest('.mob-burger-btn').querySelector('svg.burger-icon');
-        } else if (e.target.tagName === 'path'){
+        } else if (e.target.tagName === 'path') {
             burgerEl = e.target.closest('svg').parentElement.querySelector('svg.burger-icon');
-        } else if (e.target.tagName === 'rect'){
+        } else if (e.target.tagName === 'rect') {
             burgerEl = e.target.closest('.burger-icon')
         }
-        
+
         if (menuEl.classList.contains('active')) {
             menuEl.classList.remove('active')
             toggleBurgerState(burgerEl, 'close');
@@ -630,14 +677,14 @@ function burgerAnimation() {
 function githubPagesLinks() {
     document.querySelectorAll('a').forEach(link => {
         let currentHref = link.href
-        
+
         let basePath = window.location.pathname.includes('laservo') ? '/laservo/' : '/';
         if (currentHref.includes('html')) {
             const url = new URL(currentHref);
             const path = url.pathname;
-            
+
             url.pathname = basePath + path.replace(/^\//, '');
-            link.href = url.toString();            
+            link.href = url.toString();
         }
     })
 }
@@ -727,22 +774,28 @@ function reviewsTabsInit() {
                     case '1':
                         position = '0%';
                         ease = "back.out(1.5)";
+                        wrapper.parentElement.querySelector('.review-place__action .btn').href = 'asdas'
                         break;
                     case '2':
                         position = '-50%';
                         ease = "back.in(1.5)";
+                        wrapper.parentElement.querySelector('.review-place__action .btn').href = 'asdasd'
                         break;
                     case '3':
                         position = '-100%';
                         ease = "back.in(1.5)";
+                        wrapper.parentElement.querySelector('.review-place__action .btn').href = 'asdasd'
                         break;
                     case '4':
                         position = '-150%';
                         ease = "back.in(1.5)";
+                        wrapper.parentElement.querySelector('.review-place__action .btn').href = 'asdasdasd'
                         break;
                 }
                 // Применение анимации к wrapper
                 gsap.timeline().to(wrapper, { x: position, ease: ease, duration: 1 });
+
+
             }
         })
         tabsInit({
@@ -796,7 +849,8 @@ function compareSectionInit() {
 
         const slider = new CompareSlider('.compare-slider', {
             slideSelector: '.compare-slide',
-            imagesArray: imagesArray
+            imagesArray: imagesArray,
+            slideInterval: 7000,
         })
     }
     if (document.querySelector('.compare_massage')) {
@@ -810,7 +864,8 @@ function compareSectionInit() {
 
         const slider = new CompareSlider('.compare-slider', {
             slideSelector: '.compare-slide',
-            imagesArray: imagesArray
+            imagesArray: imagesArray,
+            slideInterval: 7000,
         })
     }
 }
@@ -858,7 +913,7 @@ function priceListSectionInit() {
             titleSelector: '.price-list-item__title',
             hoverBgSelector: '.price-list-item__bg',
             wrapperSelector: '.price-list-content-wrapper',
-            resetBufferTime: 201
+            resetBufferTime: 401
         });
         tabsInit({
             tabSelector: '.tab',
@@ -1186,6 +1241,7 @@ function faqInit() {
         let accordeonClass = new Accordion('.accordion', {
             wrapperSelector: null,
             heightOffset: heightOffset,
+            resetBufferTime: 401,
         });
     }
 }
